@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float startGravityScale;
     [SerializeField] private Animator anim;
     [SerializeField] private GameObject AttackBox;
+    [Header("대검 투척")]
+    [SerializeField] private GameObject Sword;
+    [SerializeField] private float ChainLength;
     //땅에 닿았는지를 판별하는 class
     private PlayerCollider _playerCollider;
     //수평이동
@@ -22,10 +25,12 @@ public class PlayerController : MonoBehaviour
     //점프 중/ 낙공 중 판별 bool
     private bool isNakGonging = false;
     private bool isjumping = false;
+    private bool isThrowing = false;
     public static float AttackPower;
     public static float stans;
     public static string AttackMode;
     public static Vector3 PlayerPos;
+    public static Quaternion PlayerRotate;
     public static float AirBonePower;
     private void Start()
     {
@@ -35,7 +40,7 @@ public class PlayerController : MonoBehaviour
         speed = startSpeed;
         _playerCollider = GetComponent<PlayerCollider>();
         Debug.Log(rigid.gravityScale);
-        AttackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
+        AttackPower = 10f;//저장 파일에서 저장된 기본값 받아오자-
         stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
     }
 
@@ -93,10 +98,15 @@ public class PlayerController : MonoBehaviour
                 NakGong();
             }
         }
+        if (Input.GetMouseButtonDown(1))
+        {
+            Throwing();
+        }
     }
     private void FixedUpdate()
     {
         PlayerPos = gameObject.transform.position;
+        PlayerRotate = gameObject.transform.rotation;
         rigid.velocity = new Vector2(horizontal * speed * Time.deltaTime, rigid.velocity.y);
     }
 
@@ -109,6 +119,20 @@ public class PlayerController : MonoBehaviour
             isNakGonging = true;
             rigid.gravityScale = rigid.gravityScale += 4f;
             StartCoroutine(GroundedChecker());
+        }
+    }
+
+    private void Throwing()
+    {
+        if (!isThrowing)
+        {
+            Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, 
+                Input.mousePosition.y, 0f));
+            Sword.GetComponent<Deager>().ThrowAt_withThrowRange(MousePos, ChainLength);
+        }
+        else
+        {
+            
         }
     }
     IEnumerator GroundedChecker()
