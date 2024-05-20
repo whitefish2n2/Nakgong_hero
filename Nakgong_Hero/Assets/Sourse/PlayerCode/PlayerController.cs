@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,10 @@ public class PlayerController : MonoBehaviour
     [Header("대검 투척")]
     [SerializeField] private GameObject Sword;
     [SerializeField] private float ChainLength;
+    [SerializeField] private float GetHookSpeed;
+    [SerializeField] int ThrowOnAirCount;
+
+    private int ThrowOnAirCountTemp;
     //땅에 닿았는지를 판별하는 class
     private PlayerCollider _playerCollider;
     //수평이동
@@ -21,11 +26,12 @@ public class PlayerController : MonoBehaviour
     //인게임 내 적용 speed
     public static float speed;
     //인게임 내 적용 점프력
-    public float jumpPower;
+    public static float jumpPower;
     //점프 중/ 낙공 중 판별 bool
     private bool isNakGonging = false;
     private bool isjumping = false;
-    private bool isThrowing = false;
+    public static bool isThrowing = false;
+    public static bool isGetHooking = false;
     public static float AttackPower;
     public static float stans;
     public static string AttackMode;
@@ -34,6 +40,8 @@ public class PlayerController : MonoBehaviour
     public static float AirBonePower;
     private void Start()
     {
+        ThrowOnAirCountTemp = ThrowOnAirCount;
+        jumpPower = 300f;
         PlayerPos = transform.position;
         AttackMode = "Default";
         AttackBox.SetActive(false);
@@ -66,7 +74,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetFloat("MoveSpeed", 1f);
             }
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A)&&!Input.GetKey(KeyCode.D))
         {
             gameObject.transform.rotation = new Quaternion(0f, 0f,0f,0f);
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
@@ -74,7 +82,7 @@ public class PlayerController : MonoBehaviour
                 anim.Play("LeftMove");
             }
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
         {
             gameObject.transform.rotation = new Quaternion(0f, 180f,0f,0f);
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
@@ -82,7 +90,7 @@ public class PlayerController : MonoBehaviour
                 anim.Play("LeftMove");
             }
         }
-        if(isjumping || !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+        if(isjumping || !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
         {
             if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Default"))
             {
@@ -100,7 +108,10 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Throwing();
+            if (!isNakGonging && !isGetHooking)
+            {
+                Throwing();
+            }
         }
     }
     private void FixedUpdate()
@@ -112,7 +123,7 @@ public class PlayerController : MonoBehaviour
 
     private void NakGong()
     {
-        if (!isNakGonging && isjumping)
+        if (!isNakGonging && !isGetHooking && !isThrowing && isjumping)
         {
             CameraDefaultMove.CameraposPlus = -2f;
             AttackBox.SetActive(true);
@@ -126,14 +137,44 @@ public class PlayerController : MonoBehaviour
     {
         if (!isThrowing)
         {
-            Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, 
-                Input.mousePosition.y, 0f));
-            Sword.GetComponent<Deager>().ThrowAt_withThrowRange(MousePos, ChainLength);
+            if (isjumping)
+            {
+                if (ThrowOnAirCount > 0)
+                {
+                    ThrowOnAirCount--;
+                    isThrowing = true;
+                    Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
+                        Input.mousePosition.y, 0f));
+                    Sword.GetComponent<Deager>().ThrowAt_withThrowRange(MousePos, ChainLength);
+                }
+            }
         }
         else
         {
-            
+            Debug.Log("Um");
+            Deager.isCrashWithWall = false; 
+            StartCoroutine(GetHook());
         }
+    }
+
+    //대검쪽으로 이동 코루틴
+    IEnumerator GetHook()
+    {
+        isGetHooking = true;
+        Vector3 StartPos = PlayerPos;
+        Vector3 GetHere = Sword.transform.position;
+        float elapsedTime = 0f;
+        float gravityTemp = rigid.gravityScale;
+        rigid.gravityScale = 0f;
+        while (elapsedTime < GetHookSpeed && !_playerCollider.isOnGround)
+        {
+            gameObject.transform.position = Vector3.Lerp(StartPos, GetHere, elapsedTime / GetHookSpeed);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        rigid.gravityScale = gravityTemp;
+        isGetHooking = false;
+        isThrowing = false;
     }
     IEnumerator GroundedChecker()
     {
@@ -142,7 +183,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log(_playerCollider.isOnGround);
         while (!_playerCollider.isOnGround)
         {
-            if (speed > 0f)
+            if (isjumping && speed > 0f)
             {
                 speed -= 300f * Time.deltaTime;
             }
@@ -157,7 +198,12 @@ public class PlayerController : MonoBehaviour
             }
             yield return null;
         }
-        StopCoroutine("jumpSlower");
+        if (isjumping)
+        {
+            StopCoroutine("jumpSlower");
+            isjumping = false;
+            speed = startSpeed;
+        }
         if (isNakGonging)
         {
             isNakGonging = false;
@@ -167,10 +213,8 @@ public class PlayerController : MonoBehaviour
                 AttackBox.SetActive(false);
             }
         }
-
         CameraDefaultMove.CameraposPlus = 0f;
-        isjumping = false;
-        speed = startSpeed;
+        ThrowOnAirCount = ThrowOnAirCountTemp;
         rigid.gravityScale = startGravityScale;
         yield break;
     }
