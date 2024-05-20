@@ -7,7 +7,8 @@ using UnityEngine;
 public class Deager : MonoBehaviour
 {
     [SerializeField] private float ThrowingSpeed;
-    public bool isCrashWithWall = false;
+    [SerializeField] private Rigidbody2D rigid;
+    public static bool isCrashWithWall = false;
     private bool dontCheck = false;
     private bool isThrowing = false;
     public void ThrowAt_withThrowRange(Vector3 ThrowPos, float Range)
@@ -20,42 +21,37 @@ public class Deager : MonoBehaviour
         float elapsedTime = 0f;
         Vector3 playerPos = PlayerController.PlayerPos;
         Vector2 dirvec = ThrowPos_IE - playerPos;
+        float MouseRange = math.sqrt(math.pow(math.abs(ThrowPos_IE.x - playerPos.x), 2) +
+                                   math.pow(math.abs(ThrowPos_IE.y - playerPos.y), 2));
         gameObject.transform.up = dirvec.normalized;
         while (math.sqrt(math.pow(math.abs(transform.position.x - playerPos.x), 2) +
-                                             math.pow(math.abs(transform.position.y - playerPos.y), 2)) < Range_IE)
+                                             math.pow(math.abs(transform.position.y - playerPos.y), 2)) < Range_IE && math.sqrt(math.pow(math.abs(transform.position.x - playerPos.x), 2) +
+                   math.pow(math.abs(transform.position.y - playerPos.y), 2)) < MouseRange)
         {
-            if (!isCrashWithWall)
+            if (!isCrashWithWall && PlayerController.isThrowing && !PlayerController.isGetHooking)
             {
-                gameObject.transform.position = Vector2.Lerp(playerPos, ThrowPos_IE, elapsedTime / ThrowingSpeed);
+                rigid.velocity = dirvec * ThrowingSpeed;
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
             else
             {
-                yield break;
+                break;
             }
         }
-
+        rigid.velocity = rigid.velocity - dirvec * ThrowingSpeed;
         yield break;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            gameObject.transform.position = PlayerController.PlayerPos;
-            isThrowing = false;
-            isCrashWithWall = false;
-        }
-
-        if (!isThrowing)
+        if (!PlayerController.isThrowing)
         {
             float zRotPlus = (PlayerController.PlayerRotate.y <= 0.5f) ? -45f : 45f;
             gameObject.transform.position =
                 new Vector3(PlayerController.PlayerPos.x,
                 PlayerController.PlayerPos.y + 0.26f, 0f);
             gameObject.transform.rotation = Quaternion.Euler(0f,0f,zRotPlus);
-            Debug.Log(gameObject.transform.rotation.z);
         }
     }
 
