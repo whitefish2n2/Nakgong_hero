@@ -7,9 +7,10 @@ using UnityEngine;
 public class Deager : MonoBehaviour
 {
     [SerializeField] private float ThrowingSpeed;
+    [SerializeField] private float TurnBackSpeed;
+    [SerializeField] private float AirWaitTime;
     [SerializeField] private Rigidbody2D rigid;
     public static bool isCrashWithWall = false;
-    private bool dontCheck = false;
     private bool isThrowing = false;
     public void ThrowAt_withThrowRange(Vector3 ThrowPos, float Range)
     {
@@ -40,6 +41,29 @@ public class Deager : MonoBehaviour
             }
         }
         rigid.velocity = rigid.velocity - dirvec * ThrowingSpeed;
+        StartCoroutine(TurnBack());
+        yield break;
+    }
+
+    IEnumerator TurnBack()
+    {
+        GroundDeagerCheck.dontCheck = true;
+        Deager.isCrashWithWall = false;
+        yield return new WaitForSeconds(AirWaitTime);
+        float TurnbackTemp = TurnBackSpeed;
+        Vector2 dirvec = PlayerController.PlayerPos - transform.position;
+        while (Vector2.Distance(transform.position, PlayerController.PlayerPos) > 0.9f)
+        {
+            dirvec = PlayerController.PlayerPos - transform.position;
+            transform.position = Vector2.Lerp(transform.position, PlayerController.PlayerPos, TurnBackSpeed * Time.deltaTime);
+            transform.up = dirvec;
+            TurnBackSpeed += 3f * Time.deltaTime;
+            yield return null;
+        }
+        TurnBackSpeed = TurnbackTemp;
+        PlayerController.isGetHooking = false;
+        PlayerController.isThrowing = false;
+        GroundDeagerCheck.dontCheck = false;
         yield break;
     }
 

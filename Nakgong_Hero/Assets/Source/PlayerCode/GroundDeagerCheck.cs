@@ -9,7 +9,7 @@ public class GroundDeagerCheck : MonoBehaviour
     public static bool dontCheck = false;
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Deager"))
+        if (other.CompareTag("Deager") && !dontCheck)
         {
             if (PlayerController.isThrowing && !PlayerController.isGetHooking)
             {

@@ -9,7 +9,6 @@ public class HitBox : MonoBehaviour
     {
         if (other.gameObject.CompareTag("DefaultMonster"))
         {
-            Debug.Log("attached");
             other.gameObject.GetComponent<DefaultMonster>()
                 .gotattack(PlayerController.AttackMode, PlayerController.AttackPower, PlayerController.stans);
         }

@@ -47,14 +47,12 @@ public class PlayerController : MonoBehaviour
         AttackBox.SetActive(false);
         speed = startSpeed;
         _playerCollider = GetComponent<PlayerCollider>();
-        Debug.Log(rigid.gravityScale);
-        AttackPower = 10f;//저장 파일에서 저장된 기본값 받아오자-
+        AttackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
         stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
     }
 
     private void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
         if (Input.GetKeyDown(KeyCode.Space) && _playerCollider.isOnGround)
         {
             rigid.AddForce(Vector2.up * jumpPower);
@@ -76,6 +74,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.A)&&!Input.GetKey(KeyCode.D))
         {
+            horizontal = -1f;
             gameObject.transform.rotation = new Quaternion(0f, 0f,0f,0f);
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
@@ -84,11 +83,17 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
         {
+            horizontal = 1f;
             gameObject.transform.rotation = new Quaternion(0f, 180f,0f,0f);
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
                 anim.Play("LeftMove");
             }
+        }
+
+        if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+        {
+            horizontal = 0f;
         }
         if(isjumping || !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
         {
@@ -166,15 +171,18 @@ public class PlayerController : MonoBehaviour
         float elapsedTime = 0f;
         float gravityTemp = rigid.gravityScale;
         rigid.gravityScale = 0f;
-        while (elapsedTime < GetHookSpeed && !_playerCollider.isOnGround)
+        while (elapsedTime < GetHookSpeed && !_playerCollider.isOnGround && isGetHooking)
         {
             gameObject.transform.position = Vector3.Lerp(StartPos, GetHere, elapsedTime / GetHookSpeed);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         rigid.gravityScale = gravityTemp;
-        isGetHooking = false;
-        isThrowing = false;
+        if (_playerCollider.isOnGround)
+        {
+            Sword.GetComponent<Deager>().StartCoroutine("TurnBack");
+        }
     }
     IEnumerator GroundedChecker()
     {
@@ -193,7 +201,6 @@ public class PlayerController : MonoBehaviour
                 if (AttackMode == "Default")
                 {
                     AirBonePower += 300f * Time.deltaTime;
-                    Debug.Log(AirBonePower);
                 }
             }
             yield return null;

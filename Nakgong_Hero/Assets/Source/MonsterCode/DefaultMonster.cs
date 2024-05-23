@@ -66,15 +66,14 @@ public class DefaultMonster : MonoBehaviour
         LeftbarInstance.GetComponent<Image>().fillAmount = HP / HP_Temp;
         if (HP / HP_Temp < 0.3f)
         {
-            LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(140, 0, 0,255);
+            LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(180, 0, 0,255);
         }
         else if (HP / HP_Temp < 0.7f)
         {
-            LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(140, 80, 0,255);
+            LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(225, 80, 0,255);
         }
         else
         {
-            Debug.Log("change");
             LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(20, 140, 0,255);
         }
         if (HP <= 0f)
