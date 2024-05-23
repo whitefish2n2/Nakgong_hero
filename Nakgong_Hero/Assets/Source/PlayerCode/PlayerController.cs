@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviour
             CameraDefaultMove.CameraposPlus = -2f;
             AttackBox.SetActive(true);
             isNakGonging = true;
-            rigid.gravityScale = rigid.gravityScale += 4f;
+            rigid.gravityScale = rigid.gravityScale += 10f;
             StartCoroutine(GroundedChecker());
         }
     }
