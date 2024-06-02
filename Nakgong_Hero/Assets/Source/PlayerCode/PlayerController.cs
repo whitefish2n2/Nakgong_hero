@@ -38,6 +38,9 @@ public class PlayerController : MonoBehaviour
     public static Vector3 PlayerPos;
     public static Quaternion PlayerRotate;
     public static float AirBonePower;
+    private bool goingleft;
+    //이전 프레임에 보고 있는 ITEM OBJECT
+    private Collider2D WatchingItemTemp;
     private void Start()
     {
         ThrowOnAirCountTemp = ThrowOnAirCount;
@@ -76,6 +79,7 @@ public class PlayerController : MonoBehaviour
         {
             horizontal = -1f;
             gameObject.transform.rotation = new Quaternion(0f, 0f,0f,0f);
+            goingleft = true;
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
                 anim.Play("LeftMove");
@@ -85,6 +89,7 @@ public class PlayerController : MonoBehaviour
         {
             horizontal = 1f;
             gameObject.transform.rotation = new Quaternion(0f, 180f,0f,0f);
+            goingleft = false;
             if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
                 anim.Play("LeftMove");
@@ -116,6 +121,21 @@ public class PlayerController : MonoBehaviour
             if (!isNakGonging && !isGetHooking)
             {
                 Throwing();
+            }
+        }
+        RaycastHit2D raycast = Physics2D.Raycast(new Vector2(PlayerPos.x, PlayerPos.y-1f), (goingleft ? Vector3.left : Vector3.right),2,LayerMask.GetMask("Items"));
+        if(!raycast.collider) return;
+        if (raycast.collider.gameObject.CompareTag("CommonItem"))
+        {
+            if (WatchingItemTemp != raycast.collider)
+            {
+                WatchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
+                raycast.collider.GetComponent<CommonItemOBJ>().Watching();
+            }
+            WatchingItemTemp = raycast.collider;
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                Destroy(raycast.collider.gameObject);
             }
         }
     }
@@ -156,7 +176,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Um");
             Deager.isCrashWithWall = false; 
             StartCoroutine(GetHook());
         }

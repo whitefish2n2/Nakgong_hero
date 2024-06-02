@@ -8,6 +8,8 @@ TagManager:
   - AttackBox
   - DefaultMonster
   - Deager
+  - CommonItem
+  - ItemInfoPanel
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - Deager
   - Chain
   - AttackHitBox
-  - 
+  - Items
   - 
   - 
   - 
