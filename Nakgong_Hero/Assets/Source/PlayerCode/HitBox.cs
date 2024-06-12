@@ -10,7 +10,11 @@ public class HitBox : MonoBehaviour
         if (other.gameObject.CompareTag("DefaultMonster"))
         {
             other.gameObject.GetComponent<DefaultMonster>()
-                .gotattack(PlayerController.AttackMode, PlayerController.AttackPower, PlayerController.stans);
+                .gotattack(PlayerController.AttackMode, InvManager.Instance.AttackPower, InvManager.Instance.stans);
+        }
+        else if (other.gameObject.CompareTag("MobGenerator"))
+        {
+            other.GetComponent<MobGenerator>().Trigger();
         }
     }
 }

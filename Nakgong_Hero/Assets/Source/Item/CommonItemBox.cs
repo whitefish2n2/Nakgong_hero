@@ -10,9 +10,6 @@ using Random = UnityEngine.Random;
 public class DefaultItem : MonoBehaviour
 {
     private GameObject thisItem;
-    private void Start()
-    {
-    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -32,12 +29,9 @@ public class DefaultItem : MonoBehaviour
     private GameObject MakeItem()
     {
         GameObject ItemPrefeb;
-        CommonItemType SelectItem = (CommonItemType)Random.Range(0,1);
+        CommonItemType SelectItem = (CommonItemType)Random.Range(0,3);
         ItemPrefeb = ItemData.Instance.CommonItems[(int)SelectItem].prefab;
-        ItemPrefeb.GetComponent<CommonItemOBJ>().ItemType = SelectItem;
-        ItemPrefeb.GetComponent<CommonItemOBJ>().ItemName = ItemData.Instance.CommonItems[(int)SelectItem].ItemName;
-        ItemPrefeb.GetComponent<CommonItemOBJ>().InvSprite = ItemData.Instance.CommonItems[(int)SelectItem].InvSprite;
-        ItemPrefeb.GetComponent<CommonItemOBJ>().Discription = ItemData.Instance.CommonItems[(int)SelectItem].Discription;
+        ItemPrefeb.GetComponent<CommonItemOBJ>().ItemInfo = ItemData.Instance.CommonItems[(int)SelectItem];
         return ItemPrefeb;
     }
 }

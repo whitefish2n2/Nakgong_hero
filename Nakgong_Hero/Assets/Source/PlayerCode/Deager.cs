@@ -11,14 +11,12 @@ public class Deager : MonoBehaviour
     [SerializeField] private float AirWaitTime;
     [SerializeField] private Rigidbody2D rigid;
     public static bool isCrashWithWall = false;
-    private bool isThrowing = false;
     public void ThrowAt_withThrowRange(Vector3 ThrowPos, float Range)
     {
         StartCoroutine(ThrowAt(ThrowPos, Range));
     }
     private IEnumerator ThrowAt(Vector3 ThrowPos_IE, float Range_IE)
     {
-        isThrowing = true;
         float elapsedTime = 0f;
         Vector3 playerPos = PlayerController.PlayerPos;
         Vector2 dirvec = ThrowPos_IE - playerPos;
@@ -64,6 +62,7 @@ public class Deager : MonoBehaviour
         PlayerController.isGetHooking = false;
         PlayerController.isThrowing = false;
         GroundDeagerCheck.dontCheck = false;
+        gameObject.GetComponent<SpriteRenderer>().color = Color.clear;
         yield break;
     }
 

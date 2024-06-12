@@ -7,9 +7,6 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rigid;
-    [SerializeField] private float startSpeed;
-    [SerializeField] private float shiftSpeedPlus;
-    [SerializeField] private float startGravityScale;
     [SerializeField] private Animator anim;
     [SerializeField] private GameObject AttackBox;
     [Header("대검 투척")]
@@ -23,55 +20,46 @@ public class PlayerController : MonoBehaviour
     private PlayerCollider _playerCollider;
     //수평이동
     private float horizontal;
-    //인게임 내 적용 speed
-    public static float speed;
-    //인게임 내 적용 점프력
-    public static float jumpPower;
     //점프 중/ 낙공 중 판별 bool
     private bool isNakGonging = false;
     private bool isjumping = false;
     public static bool isThrowing = false;
     public static bool isGetHooking = false;
-    public static float AttackPower;
-    public static float stans;
     public static string AttackMode;
     public static Vector3 PlayerPos;
     public static Quaternion PlayerRotate;
-    public static float AirBonePower;
     private bool goingleft;
     //이전 프레임에 보고 있는 ITEM OBJECT
     private Collider2D WatchingItemTemp;
     private void Start()
     {
         ThrowOnAirCountTemp = ThrowOnAirCount;
-        jumpPower = 300f;
         PlayerPos = transform.position;
         AttackMode = "Default";
         AttackBox.SetActive(false);
-        speed = startSpeed;
         _playerCollider = GetComponent<PlayerCollider>();
-        AttackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
-        stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
+        
     }
 
     private void Update()
     {
+        //이동/애니메이션 재생
         if (Input.GetKeyDown(KeyCode.Space) && _playerCollider.isOnGround)
         {
-            rigid.AddForce(Vector2.up * jumpPower);
+            rigid.AddForce(Vector2.up * InvManager.Instance.jumpPower);
             isjumping = true;
             StartCoroutine(GroundedChecker());
         }
         if (Input.GetKey(KeyCode.LeftShift) && !isjumping)
         {
-            speed = startSpeed + shiftSpeedPlus;
+            InvManager.Instance.speed = InvManager.Instance.startSpeed + InvManager.Instance.shiftSpeedPlus;
             anim.SetFloat("MoveSpeed",2f);
         }
         else
         {
             if (!isjumping)
             {
-                speed = startSpeed;
+                InvManager.Instance.speed = InvManager.Instance.startSpeed;
                 anim.SetFloat("MoveSpeed", 1f);
             }
         }
@@ -95,7 +83,6 @@ public class PlayerController : MonoBehaviour
                 anim.Play("LeftMove");
             }
         }
-
         if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
         {
             horizontal = 0f;
@@ -109,6 +96,7 @@ public class PlayerController : MonoBehaviour
                 anim.Play("Default");
             }
         }
+        //좌클릭-낙공 우클릭-던지기
         if (Input.GetMouseButtonDown(0))
         {
             if (!_playerCollider.isOnGround)
@@ -123,19 +111,18 @@ public class PlayerController : MonoBehaviour
                 Throwing();
             }
         }
+        //아이템 인터렉트 코드
         RaycastHit2D raycast = Physics2D.Raycast(new Vector2(PlayerPos.x, PlayerPos.y-1f), (goingleft ? Vector3.left : Vector3.right),2,LayerMask.GetMask("Items"));
-        if(!raycast.collider) return;
-        if (raycast.collider.gameObject.CompareTag("CommonItem"))
+        if (raycast.collider is not null)
         {
-            if (WatchingItemTemp != raycast.collider)
+            if (raycast.collider.gameObject.CompareTag("CommonItem"))
             {
-                WatchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
+                if (WatchingItemTemp)
+                {
+                    WatchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
+                }
                 raycast.collider.GetComponent<CommonItemOBJ>().Watching();
-            }
-            WatchingItemTemp = raycast.collider;
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                Destroy(raycast.collider.gameObject);
+                WatchingItemTemp = raycast.collider;
             }
         }
     }
@@ -143,7 +130,7 @@ public class PlayerController : MonoBehaviour
     {
         PlayerPos = gameObject.transform.position;
         PlayerRotate = gameObject.transform.rotation;
-        rigid.velocity = new Vector2(horizontal * speed * Time.deltaTime, rigid.velocity.y);
+        rigid.velocity = new Vector2(horizontal * InvManager.Instance.speed * Time.deltaTime, rigid.velocity.y);
     }
 
     private void NakGong()
@@ -153,7 +140,8 @@ public class PlayerController : MonoBehaviour
             CameraDefaultMove.CameraposPlus = -2f;
             AttackBox.SetActive(true);
             isNakGonging = true;
-            rigid.gravityScale = rigid.gravityScale += 10f;
+            //낙공 속도
+            rigid.gravityScale = InvManager.Instance.startGravityScale + InvManager.Instance.GravityScalePlus;
             StartCoroutine(GroundedChecker());
         }
     }
@@ -166,6 +154,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (ThrowOnAirCount > 0)
                 {
+                    Sword.GetComponent<SpriteRenderer>().color = Color.white;
                     ThrowOnAirCount--;
                     isThrowing = true;
                     Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
@@ -210,16 +199,16 @@ public class PlayerController : MonoBehaviour
         Debug.Log(_playerCollider.isOnGround);
         while (!_playerCollider.isOnGround)
         {
-            if (isjumping && speed > 0f)
+            if (isjumping && InvManager.Instance.speed > 0f)
             {
-                speed -= 300f * Time.deltaTime;
+                InvManager.Instance.speed -= 300f * Time.deltaTime;
             }
 
             if (isNakGonging)
             {
                 if (AttackMode == "Default")
                 {
-                    AirBonePower += 300f * Time.deltaTime;
+                    InvManager.Instance.AirBonePower += 300f * Time.deltaTime;
                 }
             }
             yield return null;
@@ -228,20 +217,20 @@ public class PlayerController : MonoBehaviour
         {
             StopCoroutine("jumpSlower");
             isjumping = false;
-            speed = startSpeed;
+            InvManager.Instance.speed = InvManager.Instance.startSpeed;
         }
         if (isNakGonging)
         {
             isNakGonging = false;
             if (AttackMode == "Default")
             {
-                AirBonePower = 0f;
+                InvManager.Instance.AirBonePower = 0f;
                 AttackBox.SetActive(false);
             }
         }
         CameraDefaultMove.CameraposPlus = 0f;
         ThrowOnAirCount = ThrowOnAirCountTemp;
-        rigid.gravityScale = startGravityScale;
+        rigid.gravityScale = InvManager.Instance.startGravityScale;
         yield break;
     }
 }

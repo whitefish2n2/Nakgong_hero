@@ -10,6 +10,8 @@ TagManager:
   - Deager
   - CommonItem
   - ItemInfoPanel
+  - MobGenerator
+  - Canvas
   layers:
   - Default
   - TransparentFX
