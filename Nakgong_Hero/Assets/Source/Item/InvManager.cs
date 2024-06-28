@@ -29,7 +29,6 @@ public class InvManager : MonoBehaviour
     public float GravityScalePlus;
     //체력
     public float HP;
-
     public float MaxHP;
     //골드
     public float Gold;
@@ -41,7 +40,7 @@ public class InvManager : MonoBehaviour
         stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
         HP = 50f;
         MaxHP = 100f;
-        jumpPower = 300f;
+        jumpPower = 5f;
         startSpeed = 150f;
         shiftSpeedPlus = 100f;
         speed = startSpeed;
@@ -59,7 +58,6 @@ public class InvManager : MonoBehaviour
     /// <param name="CommonItem"></param>
     public void GetInGameItem(CommonItem Item)
     {
-        Debug.Log(Item.ItemType);
         switch (Item.ItemType)
         {
             case CommonItemType.RedPortion:

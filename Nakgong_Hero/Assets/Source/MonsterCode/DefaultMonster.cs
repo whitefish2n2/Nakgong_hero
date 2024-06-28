@@ -20,6 +20,8 @@ public class DefaultMonster : MonoBehaviour
     [SerializeField] private float distance;
     private GameObject LeftbarInstance;
     private RectTransform HpBar;
+    private SpriteRenderer Object_Sprite;
+    private bool youCantHurtMe = false;
 
     void Start()
     {
@@ -27,6 +29,7 @@ public class DefaultMonster : MonoBehaviour
         LeftbarInstance = Instantiate(leftHP_Bar, Canvas.transform);
         HpBar = LeftbarInstance.GetComponent<RectTransform>();
         thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        Object_Sprite = gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
         LeftbarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
         HP *= InvManager.Instance.Difficulty;
         stans *= InvManager.Instance.Difficulty;
@@ -40,6 +43,10 @@ public class DefaultMonster : MonoBehaviour
     }
     public void gotattack(string AttackMode, float Damage, float stansMinus)
     {
+        if (youCantHurtMe)
+        {
+            return;
+        }
         float RealDamage = Damage + InvManager.Instance.AirBonePower/100f;
         if (AttackMode == "Default")
         {
@@ -57,6 +64,7 @@ public class DefaultMonster : MonoBehaviour
             {
                 KnockBack();
             }
+            StartCoroutine(invincibility(1f));
         }
     }
 
@@ -93,10 +101,16 @@ public class DefaultMonster : MonoBehaviour
             Dead();
         }
     }
-
     private void Dead()
     {
         Debug.Log("으앙죽음ㅜㅜ");
         Destroy(gameObject);
+    }
+
+    IEnumerator invincibility(float time)
+    {
+        youCantHurtMe = true;
+        yield return new WaitForSeconds(time);
+        youCantHurtMe = false;
     }
 }

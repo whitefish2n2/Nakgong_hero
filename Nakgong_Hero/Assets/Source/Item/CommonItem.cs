@@ -5,6 +5,7 @@ using Items;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Object = System.Object;
 
@@ -16,5 +17,6 @@ public class CommonItem
     public GameObject prefab;
     public Sprite InvSprite;
     [TextArea] public string Discription;
+    public UnityEvent  
 }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -22,7 +23,8 @@ public class PlayerController : MonoBehaviour
     private float horizontal;
     //점프 중/ 낙공 중 판별 bool
     private bool isNakGonging = false;
-    private bool isjumping = false;
+    private bool isJumping;
+    private bool isReadyNakgong = false;
     public static bool isThrowing = false;
     public static bool isGetHooking = false;
     public static string AttackMode;
@@ -46,18 +48,16 @@ public class PlayerController : MonoBehaviour
         //이동/애니메이션 재생
         if (Input.GetKeyDown(KeyCode.Space) && _playerCollider.isOnGround)
         {
-            rigid.AddForce(Vector2.up * InvManager.Instance.jumpPower);
-            isjumping = true;
-            StartCoroutine(GroundedChecker());
+            StartCoroutine(Jump());
         }
-        if (Input.GetKey(KeyCode.LeftShift) && !isjumping)
+        if (Input.GetKey(KeyCode.LeftShift) && !isReadyNakgong)
         {
             InvManager.Instance.speed = InvManager.Instance.startSpeed + InvManager.Instance.shiftSpeedPlus;
             anim.SetFloat("MoveSpeed",2f);
         }
         else
         {
-            if (!isjumping)
+            if (!isReadyNakgong)
             {
                 InvManager.Instance.speed = InvManager.Instance.startSpeed;
                 anim.SetFloat("MoveSpeed", 1f);
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
             horizontal = -1f;
             gameObject.transform.rotation = new Quaternion(0f, 0f,0f,0f);
             goingleft = true;
-            if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
+            if (!isReadyNakgong && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
                 anim.Play("LeftMove");
             }
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
             horizontal = 1f;
             gameObject.transform.rotation = new Quaternion(0f, 180f,0f,0f);
             goingleft = false;
-            if (!isjumping && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
+            if (!isReadyNakgong && anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
             {
                 anim.Play("LeftMove");
             }
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
         {
             horizontal = 0f;
         }
-        if(isjumping || !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
+        if(isReadyNakgong || !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
         {
             if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Default"))
             {
@@ -99,14 +99,14 @@ public class PlayerController : MonoBehaviour
         //좌클릭-낙공 우클릭-던지기
         if (Input.GetMouseButtonDown(0))
         {
-            if (!_playerCollider.isOnGround)
+            if (isReadyNakgong)
             {
                 NakGong();
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            if (!isNakGonging && !isGetHooking)
+            if (!isNakGonging && !isGetHooking && !isReadyNakgong)
             {
                 Throwing();
             }
@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
     private void NakGong()
     {
-        if (!isNakGonging && !isGetHooking && !isThrowing && isjumping)
+        if (!isNakGonging && !isGetHooking && !isThrowing && isReadyNakgong)
         {
             CameraDefaultMove.CameraposPlus = -2f;
             AttackBox.SetActive(true);
@@ -150,17 +150,14 @@ public class PlayerController : MonoBehaviour
     {
         if (!isThrowing)
         {
-            if (isjumping)
+            if (ThrowOnAirCount > 0)
             {
-                if (ThrowOnAirCount > 0)
-                {
-                    Sword.GetComponent<SpriteRenderer>().color = Color.white;
-                    ThrowOnAirCount--;
-                    isThrowing = true;
-                    Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
-                        Input.mousePosition.y, 0f));
-                    Sword.GetComponent<Deager>().ThrowAt_withThrowRange(MousePos, ChainLength);
-                }
+                Sword.GetComponent<SpriteRenderer>().color = Color.white;
+                ThrowOnAirCount--;
+                isThrowing = true;
+                Vector3 MousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
+                    Input.mousePosition.y, 0f));
+                Sword.GetComponent<Deager>().ThrowAt_withThrowRange(MousePos, ChainLength);
             }
         }
         else
@@ -178,19 +175,52 @@ public class PlayerController : MonoBehaviour
         Vector3 GetHere = Sword.transform.position;
         float elapsedTime = 0f;
         float gravityTemp = rigid.gravityScale;
+        bool GoNakgong = false;
         rigid.gravityScale = 0f;
         while (elapsedTime < GetHookSpeed && !_playerCollider.isOnGround && isGetHooking)
         {
             gameObject.transform.position = Vector3.Lerp(StartPos, GetHere, elapsedTime / GetHookSpeed);
             elapsedTime += Time.deltaTime;
+            if (Input.GetMouseButtonDown(0))
+            {
+                GoNakgong = true;
+            }
             yield return null;
         }
-
         rigid.gravityScale = gravityTemp;
+        if (GoNakgong)
+        {
+            isReadyNakgong = true;
+            rigid.velocity = new Vector2(rigid.velocity.x,InvManager.Instance.jumpPower/2);
+            NakGong();    
+        }
         if (_playerCollider.isOnGround)
         {
             Sword.GetComponent<Deager>().StartCoroutine("TurnBack");
         }
+    }
+
+    IEnumerator Jump()
+    {
+        isJumping = true;
+        rigid.velocity = new Vector2(rigid.velocity.x,InvManager.Instance.jumpPower);
+        yield return new WaitForSeconds(0.04f);
+        Debug.Log(_playerCollider.isOnGround);  
+        while (!_playerCollider.isOnGround)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !isThrowing)
+            {
+                isReadyNakgong = true;
+                isJumping = false;
+                rigid.velocity = new Vector2(rigid.velocity.x,InvManager.Instance.jumpPower);
+                StartCoroutine(GroundedChecker());
+                ThrowOnAirCount = ThrowOnAirCountTemp;
+                yield break;
+            }
+            yield return null;
+        }
+        ThrowOnAirCount = ThrowOnAirCountTemp;
+        yield break;
     }
     IEnumerator GroundedChecker()
     {
@@ -199,7 +229,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log(_playerCollider.isOnGround);
         while (!_playerCollider.isOnGround)
         {
-            if (isjumping && InvManager.Instance.speed > 0f)
+            if (isReadyNakgong && InvManager.Instance.speed > 0f)
             {
                 InvManager.Instance.speed -= 300f * Time.deltaTime;
             }
@@ -213,10 +243,9 @@ public class PlayerController : MonoBehaviour
             }
             yield return null;
         }
-        if (isjumping)
+        if (isReadyNakgong)
         {
-            StopCoroutine("jumpSlower");
-            isjumping = false;
+            isReadyNakgong = false;
             InvManager.Instance.speed = InvManager.Instance.startSpeed;
         }
         if (isNakGonging)
@@ -229,7 +258,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         CameraDefaultMove.CameraposPlus = 0f;
-        ThrowOnAirCount = ThrowOnAirCountTemp;
         rigid.gravityScale = InvManager.Instance.startGravityScale;
         yield break;
     }

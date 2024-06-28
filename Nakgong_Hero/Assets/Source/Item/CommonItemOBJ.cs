@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Items;
@@ -8,7 +9,6 @@ public class CommonItemOBJ : MonoBehaviour
 {
     public CommonItem ItemInfo;
     private bool dontcheck = true;
-
     public void Watching()
     {
         ItemInteract.Instance.ChangeText("획득");
