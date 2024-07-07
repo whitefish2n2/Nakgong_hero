@@ -20,6 +20,6 @@ namespace Items
             ItemInfoPanel = GameObject.FindWithTag("ItemInfoPanel");
         }
 
-        public CommonItem GetCommonItem(CommonItemType type) => CommonItems[(int)type];
+        public CommonItem GetCommonItem(ItemType type) => CommonItems[(int)type];
     }
 }

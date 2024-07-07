@@ -12,6 +12,9 @@ TagManager:
   - ItemInfoPanel
   - MobGenerator
   - Canvas
+  - MovingObject
+  - Moving
+  - Cover
   layers:
   - Default
   - TransparentFX
@@ -24,7 +27,7 @@ TagManager:
   - Chain
   - AttackHitBox
   - Items
-  - 
+  - MovingObjects
   - 
   - 
   - 

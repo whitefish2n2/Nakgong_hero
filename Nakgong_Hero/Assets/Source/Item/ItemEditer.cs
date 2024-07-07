@@ -20,7 +20,7 @@ namespace CommonItemEditor
         {
             base.OnInspectorGUI();
             
-            var CommonItemsEnum = Enum.GetValues(typeof(CommonItemType));
+            var CommonItemsEnum = Enum.GetValues(typeof(ItemType));
             
             var CommonItemArray = (ItemData)target;
             if (CommonItemArray.CommonItems is not { Length: > 0 } || CommonItemArray.CommonItems.Length != CommonItemsEnum.Length)
@@ -43,7 +43,7 @@ namespace CommonItemEditor
             {
                 idx = (int)type;
                 var commonItem = CommonItemArray.CommonItems[idx];
-                if (CommonItemArray.toggled[idx] = EditorGUILayout.BeginFoldoutHeaderGroup(CommonItemArray.toggled[idx], $"{((CommonItemType)type).ToString()}: {commonItem.ItemName}"))
+                if (CommonItemArray.toggled[idx] = EditorGUILayout.BeginFoldoutHeaderGroup(CommonItemArray.toggled[idx], $"{((ItemType)type).ToString()}: {commonItem.ItemName}"))
                 {
                     commonItem.ItemName = EditorGUILayout.TextField("Name", commonItem.ItemName);
                     EditorGUILayout.LabelField("Description");

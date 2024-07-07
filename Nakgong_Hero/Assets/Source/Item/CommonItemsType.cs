@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Items
 {
-    public enum CommonItemType
+    public enum ItemType
     {
         RedPortion,
         Weight,
@@ -12,6 +12,7 @@ namespace Items
         Blue,
         Feather,
         Heart,
-        Gold
+        Gold,
+        MoveAbleObject
     }
 }

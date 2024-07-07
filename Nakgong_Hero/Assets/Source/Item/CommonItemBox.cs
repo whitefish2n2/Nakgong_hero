@@ -29,9 +29,9 @@ public class DefaultItem : MonoBehaviour
     private GameObject MakeItem()
     {
         GameObject ItemPrefeb;
-        CommonItemType SelectItem = (CommonItemType)Random.Range(0,3);
+        ItemType SelectItem = (ItemType)Random.Range(0,3);
         ItemPrefeb = ItemData.Instance.CommonItems[(int)SelectItem].prefab;
-        ItemPrefeb.GetComponent<CommonItemOBJ>().ItemInfo = ItemData.Instance.CommonItems[(int)SelectItem];
+        ItemPrefeb.GetComponent<CommonItemOBJ>().itemInfo = ItemData.Instance.CommonItems[(int)SelectItem];
         return ItemPrefeb;
     }
 }

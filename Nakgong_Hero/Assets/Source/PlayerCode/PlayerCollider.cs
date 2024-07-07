@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class PlayerCollider : MonoBehaviour
 {
-    private bool IsOnGround_this = false;
+    private bool isOnGroundThis = false;
+    private bool detect;
+    private bool isOnCoverThis;
 
     public bool isOnGround
     {
         get
         {
-            if (IsOnGround_this)
+            if (isOnGroundThis)
             {
-                IsOnGround_this = false;
+                isOnGroundThis = false;
                 return true;
             }
             else
@@ -27,7 +29,15 @@ public class PlayerCollider : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            IsOnGround_this = true;
+            isOnGroundThis = true;
+        }
+        else if (other.gameObject.CompareTag("Cover") || other.gameObject.CompareTag("MovingObject"))
+        {
+            isOnCoverThis = true;
+        }
+        else
+        {
+            isOnCoverThis = false;
         }
     }
 }

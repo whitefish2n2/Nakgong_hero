@@ -3,15 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Items;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CommonItemOBJ : MonoBehaviour
 {
-    public CommonItem ItemInfo;
+    public CommonItem itemInfo;
+    [SerializeField] bool interactOnUser;
     private bool dontcheck = true;
     public void Watching()
     {
-        ItemInteract.Instance.ChangeText("획득");
         dontcheck = false;
         StartCoroutine(WatchChecker());
     }
@@ -29,15 +31,18 @@ public class CommonItemOBJ : MonoBehaviour
         {
             if (!dontcheck)
             {
-                ItemInteract.Instance.InteractOnHere(new Vector2(transform.position.x, transform.position.y + 1f));
+                if(interactOnUser)
+                    ItemInteract.Instance.InteractOnHere(new Vector2(PlayerController.PlayerPos.x-0.4f, PlayerController.PlayerPos.y + 1f));
+                else
+                    ItemInteract.Instance.InteractOnHere(new Vector2(transform.position.x, transform.position.y + 1f));
                 if (Input.GetKeyDown(KeyCode.F))
                 {
+                    itemInfo.Get();
                     DisWatching();
-                    InvManager.Instance.GetInGameItem(ItemInfo);
-                    Destroy(gameObject);
+                    if(itemInfo.isDestroyItem)
+                        Destroy(gameObject);
                 }
             }
-
             yield return null;
         }
         DisWatching();

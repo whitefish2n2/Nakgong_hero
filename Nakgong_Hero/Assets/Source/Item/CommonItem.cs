@@ -12,11 +12,17 @@ using Object = System.Object;
 [Serializable]
 public class CommonItem
 {
-    public CommonItemType ItemType;
+    public ItemType ItemType;
+    public bool isDestroyItem = true;
     public string ItemName;
     public GameObject prefab;
     public Sprite InvSprite;
     [TextArea] public string Discription;
-    public UnityEvent  
+    public UnityEvent OnGet;
+
+    public void Get()
+    {
+        OnGet.Invoke();
+    }
 }
 

@@ -27,7 +27,7 @@ public class Deager : MonoBehaviour
                                              math.pow(math.abs(transform.position.y - playerPos.y), 2)) < Range_IE && math.sqrt(math.pow(math.abs(transform.position.x - playerPos.x), 2) +
                    math.pow(math.abs(transform.position.y - playerPos.y), 2)) < MouseRange)
         {
-            if (!isCrashWithWall && PlayerController.isThrowing && !PlayerController.isGetHooking)
+            if (!isCrashWithWall && PlayerController.IsThrowing && !PlayerController.IsGetHooking)
             {
                 rigid.velocity = dirvec * ThrowingSpeed;
                 elapsedTime += Time.deltaTime;
@@ -59,8 +59,8 @@ public class Deager : MonoBehaviour
             yield return null;
         }
         TurnBackSpeed = TurnbackTemp;
-        PlayerController.isGetHooking = false;
-        PlayerController.isThrowing = false;
+        PlayerController.IsGetHooking = false;
+        PlayerController.IsThrowing = false;
         GroundDeagerCheck.dontCheck = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.clear;
         yield break;
@@ -68,7 +68,7 @@ public class Deager : MonoBehaviour
 
     private void Update()
     {
-        if (!PlayerController.isThrowing)
+        if (!PlayerController.IsThrowing)
         {
             float zRotPlus = (PlayerController.PlayerRotate.y <= 0.5f) ? -45f : 45f;
             gameObject.transform.position =

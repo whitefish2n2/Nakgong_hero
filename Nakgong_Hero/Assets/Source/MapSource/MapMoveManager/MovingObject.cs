@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class MovingObject : MonoBehaviour
+{
+    [SerializeField] private UnityEvent OnEnd;
+
+    public void MoveStart(Vector2 to, float time, bool stopPlayer)
+    {
+        to = new Vector2(to.x , to.y);
+        StartCoroutine(Move(transform.position, to, time, stopPlayer));
+    }
+    private void MoveEnd()
+    {
+        OnEnd?.Invoke();
+    }
+
+    IEnumerator Move(Vector2 from, Vector2 to, float time, bool stopPlayer)
+    {
+        var elapsedTime = 0f;
+        var tagTemp = transform.tag;
+        gameObject.transform.tag = "Moving";
+        if(stopPlayer)
+            PlayerController.Stop();
+        while (elapsedTime < time)
+        {
+            gameObject.transform.position = Vector2.Lerp(from, to, elapsedTime / time);
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        gameObject.transform.position = to;
+        gameObject.transform.tag = tagTemp;
+        if (stopPlayer)
+            PlayerController.DisStop();
+        MoveEnd();
+    }
+}

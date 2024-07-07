@@ -36,6 +36,7 @@ public class InvManager : MonoBehaviour
     public float Difficulty;
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         AttackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
         stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
         HP = 50f;
@@ -56,40 +57,25 @@ public class InvManager : MonoBehaviour
     /// 커먼 아이템 얻는 함수
     /// </summary>
     /// <param name="CommonItem"></param>
-    public void GetInGameItem(CommonItem Item)
-    {
-        switch (Item.ItemType)
-        {
-            case CommonItemType.RedPortion:
-                GetRedPortion();
-                break;
-            case CommonItemType.Hone:
-                GetHone();
-                break;
-            case CommonItemType.Weight:
-                GravityScalePlus += 0.5f;
-                break;
-        }
-    }
-
     /// <summary>
     /// 특수 아이템 얻는 함수
     /// </summary>
     /// <param name="특수 아이템"></param>
-    public void GetInGameItem(int a)
-    {
-        
-    }
 
 
 
 
 
-    private void GetHone()
+    public void GetHone()
     {
         AttackPower += 5f;
     }
-    private void GetRedPortion()
+
+    public void GetWeight()
+    {
+        GravityScalePlus += 0.5f;
+    }
+    public void GetRedPortion()
     {
         if (HP < 100f)
         {
