@@ -40,7 +40,6 @@ public class Deager : MonoBehaviour
         }
         rigid.velocity = rigid.velocity - dirvec * ThrowingSpeed;
         StartCoroutine(TurnBack());
-        yield break;
     }
 
     IEnumerator TurnBack()
@@ -63,7 +62,6 @@ public class Deager : MonoBehaviour
         PlayerController.IsThrowing = false;
         GroundDeagerCheck.dontCheck = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.clear;
-        yield break;
     }
 
     private void Update()

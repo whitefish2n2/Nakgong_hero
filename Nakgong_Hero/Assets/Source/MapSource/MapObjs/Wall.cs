@@ -12,23 +12,12 @@ public class Wall : MonoBehaviour
     private bool moved = false;
     private void Awake()
     {
-        var position = transform.position;
-        startPosition = position;
-        moveTo = new Vector2(position.x + moveTo.x, position.y + moveTo.y);
+        startPosition = transform.position;
+        moveTo += startPosition;
     }
 
     public void WallMove()
     {
-        if (moved)
-        {
-            gameObject.GetComponent<MovingObject>().MoveStart(startPosition, moveTime,true);
-            moved = false;
-        }
-        else
-        {
-            gameObject.GetComponent<MovingObject>().MoveStart(moveTo, moveTime, true);
-            moved = true;
-        }
-        
+        gameObject.GetComponent<MovingObject>().MoveStart((moved = !moved) ? moveTo : startPosition, moveTime,true);
     }
 }

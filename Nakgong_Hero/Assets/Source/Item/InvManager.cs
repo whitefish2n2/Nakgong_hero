@@ -77,20 +77,6 @@ public class InvManager : MonoBehaviour
     }
     public void GetRedPortion()
     {
-        if (HP < 100f)
-        {
-            HP += Random.Range(5, 10);
-            if (HP < MaxHP)
-            {
-                HP = MaxHP;
-            }
-        }
-        else
-        {
-            if (HP < MaxHP)
-            {
-                HP = MaxHP;
-            }
-        }
+        HP = Math.Min(MaxHP, HP + Random.Range(5, 10));
     }
 }

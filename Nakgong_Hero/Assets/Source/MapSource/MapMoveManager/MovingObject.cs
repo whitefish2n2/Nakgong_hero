@@ -9,7 +9,6 @@ public class MovingObject : MonoBehaviour
 
     public void MoveStart(Vector2 to, float time, bool stopPlayer)
     {
-        to = new Vector2(to.x , to.y);
         StartCoroutine(Move(transform.position, to, time, stopPlayer));
     }
     private void MoveEnd()

@@ -90,7 +90,6 @@ public class MonsterMove : MonoBehaviour
         speed -= AggroSpeed;
         isAggroling = false;
         Invoke("Think",2f);
-        yield break;
     }
 
     void Think()
