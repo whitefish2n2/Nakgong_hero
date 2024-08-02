@@ -11,21 +11,33 @@ public class Deager : MonoBehaviour
     [SerializeField] private float AirWaitTime;
     [SerializeField] private Rigidbody2D rigid;
     public static bool isCrashWithWall = false;
+    private bool _isThrowing;
     public void ThrowAt_withThrowRange(Vector3 ThrowPos, float Range)
     {
         StartCoroutine(ThrowAt(ThrowPos, Range));
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (_isThrowing)
+        {
+            if (other.CompareTag("DefaultMonster"))
+            {
+                other.GetComponent<DefaultMonster>().gotattack("Throw", InvManager.Instance.AttackPower*1371, InvManager.Instance.stans*40);
+            }
+        }
+        
+    }
+
     private IEnumerator ThrowAt(Vector3 ThrowPos_IE, float Range_IE)
     {
         float elapsedTime = 0f;
         Vector3 playerPos = PlayerController.PlayerPos;
         Vector2 dirvec = ThrowPos_IE - playerPos;
-        float MouseRange = math.sqrt(math.pow(math.abs(ThrowPos_IE.x - playerPos.x), 2) +
-                                   math.pow(math.abs(ThrowPos_IE.y - playerPos.y), 2));
+        float MouseRange = Vector2.Distance(ThrowPos_IE, playerPos);
+        _isThrowing = true;
         gameObject.transform.up = dirvec.normalized;
-        while (math.sqrt(math.pow(math.abs(transform.position.x - playerPos.x), 2) +
-                                             math.pow(math.abs(transform.position.y - playerPos.y), 2)) < Range_IE && math.sqrt(math.pow(math.abs(transform.position.x - playerPos.x), 2) +
-                   math.pow(math.abs(transform.position.y - playerPos.y), 2)) < MouseRange)
+        while (Vector2.Distance(transform.position,playerPos) < Range_IE && Vector2.Distance(transform.position,playerPos) < MouseRange)
         {
             if (!isCrashWithWall && PlayerController.IsThrowing && !PlayerController.IsGetHooking)
             {
@@ -38,17 +50,16 @@ public class Deager : MonoBehaviour
                 break;
             }
         }
-        rigid.velocity = rigid.velocity - dirvec * ThrowingSpeed;
+        rigid.velocity -= dirvec * ThrowingSpeed;
         StartCoroutine(TurnBack());
         yield break;
     }
-
     IEnumerator TurnBack()
     {
         GroundDeagerCheck.dontCheck = true;
-        Deager.isCrashWithWall = false;
+        isCrashWithWall = false;
         yield return new WaitForSeconds(AirWaitTime);
-        float TurnbackTemp = TurnBackSpeed;
+        float turnbackTemp = TurnBackSpeed;
         Vector2 dirvec = PlayerController.PlayerPos - transform.position;
         while (Vector2.Distance(transform.position, PlayerController.PlayerPos) > 0.9f)
         {
@@ -58,11 +69,12 @@ public class Deager : MonoBehaviour
             TurnBackSpeed += 3f * Time.deltaTime;
             yield return null;
         }
-        TurnBackSpeed = TurnbackTemp;
+        TurnBackSpeed = turnbackTemp;
         PlayerController.IsGetHooking = false;
         PlayerController.IsThrowing = false;
         GroundDeagerCheck.dontCheck = false;
         gameObject.GetComponent<SpriteRenderer>().color = Color.clear;
+        _isThrowing = false;
         yield break;
     }
 

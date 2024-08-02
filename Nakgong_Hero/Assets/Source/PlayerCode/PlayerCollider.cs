@@ -5,17 +5,47 @@ using UnityEngine;
 
 public class PlayerCollider : MonoBehaviour
 {
-    private bool isOnGroundThis = false;
-    private bool detect;
-    private bool isOnCoverThis;
-
+    private bool Colliding = false;
     public bool isOnGround
     {
         get
         {
-            if (isOnGroundThis)
+            RaycastHit2D leftRay =
+                Physics2D.Raycast(new Vector2(PlayerController.PlayerPos.x-0.4f, PlayerController.PlayerPos.y - 1f),
+                    Vector2.down, 0.2f, LayerMask.GetMask("Default"));
+            RaycastHit2D rightRay =
+                Physics2D.Raycast(new Vector2(PlayerController.PlayerPos.x+0.4f, PlayerController.PlayerPos.y - 1f),
+                    Vector2.down, 0.2f, LayerMask.GetMask("Default"));
+            if (leftRay.collider is not null)
             {
-                isOnGroundThis = false;
+                if (leftRay.collider.gameObject.CompareTag("Ground"))
+                {
+                    return true;
+                }
+            }
+            else if (rightRay.collider is not null)
+            {
+                if (rightRay.collider.gameObject.CompareTag("Ground"))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
+    }
+
+    public bool IsColliding
+    {
+        get
+        {
+            if (Colliding)
+            {
+                Colliding = false;
                 return true;
             }
             else
@@ -29,15 +59,7 @@ public class PlayerCollider : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            isOnGroundThis = true;
-        }
-        else if (other.gameObject.CompareTag("Cover") || other.gameObject.CompareTag("MovingObject"))
-        {
-            isOnCoverThis = true;
-        }
-        else
-        {
-            isOnCoverThis = false;
+            Colliding = true;
         }
     }
 }

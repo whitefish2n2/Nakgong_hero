@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Build.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -47,24 +49,38 @@ public class DefaultMonster : MonoBehaviour
         {
             return;
         }
-        float RealDamage = Damage + InvManager.Instance.AirBonePower/100f;
+        
         if (AttackMode == "Default")
         {
-            GameObject instance = Instantiate(DamagePrefabManager.DamagePrefab,
-                Canvas.transform);
-            instance.transform.position =
-                Camera.main.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
-            instance.GetComponent<TextMeshProUGUI>().text = ((int)RealDamage).ToString();
-            instance.GetComponent<Animator>().Play("DamageOn");
-            Destroy(instance,1f);
-            HP -= RealDamage;
-            HPUpdate();
-            stans -= stansMinus;
-            if (stans <= 0f)
-            {
-                KnockBack();
-            }
+            float RealDamage = Damage + InvManager.Instance.AirBonePower/100f;
+            attack_Effect(RealDamage, stansMinus);
             StartCoroutine(invincibility(1f));
+            return;
+        }
+
+        if (AttackMode == "Throw")
+        {
+            attack_Effect(Damage, stansMinus);
+            StartCoroutine(invincibility(0.3f));
+        }
+    }
+
+    private void attack_Effect(float damage, float stanceMinus)
+    {
+        
+        GameObject instance = Instantiate(DamagePrefabManager.DamagePrefab,
+            Canvas.transform);
+        instance.transform.position =
+            Camera.main.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
+        instance.GetComponent<TextMeshProUGUI>().text = ((int)damage).ToString();
+        instance.GetComponent<Animator>().Play("DamageOn");
+        Destroy(instance,1f);
+        HP -= damage;
+        HPUpdate();
+        stans -= stanceMinus;
+        if (stans <= 0f)
+        {
+            KnockBack();
         }
     }
 

@@ -19,7 +19,7 @@ public class InvManager : MonoBehaviour
     public float jumpPower;
     //플레이어 공격력
     public float AttackPower;
-    //플레이어 스택스 파괴율
+    //플레이어 스탠스 파괴율
     public float stans;
     //에어본 세기
     public float AirBonePower;
@@ -42,7 +42,7 @@ public class InvManager : MonoBehaviour
         HP = 50f;
         MaxHP = 100f;
         jumpPower = 5f;
-        startSpeed = 150f;
+        startSpeed = 300f;
         shiftSpeedPlus = 100f;
         speed = startSpeed;
         startGravityScale = 1f;

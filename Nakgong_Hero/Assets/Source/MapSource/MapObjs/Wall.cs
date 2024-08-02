@@ -12,9 +12,8 @@ public class Wall : MonoBehaviour
     private bool moved = false;
     private void Awake()
     {
-        var position = transform.position;
-        startPosition = position;
-        moveTo = new Vector2(position.x + moveTo.x, position.y + moveTo.y);
+        startPosition = transform.position;
+        moveTo = new Vector2(startPosition.x + moveTo.x, startPosition.y + moveTo.y);
     }
 
     public void WallMove()
