@@ -2,36 +2,45 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class MonsterMove : MonoBehaviour
 {
-    [SerializeField] private Vector2 CanMovePos1;
-    [SerializeField] private Vector2 CanMovePos2;
     [SerializeField] private float speed;
     [SerializeField] private Animator anim;
-    [SerializeField] private Vector2 AggroRange;
-    [SerializeField] private float AggroSpeed;
+    [SerializeField] private Vector2 aggroRange;
+    [SerializeField] private float aggroSpeed;
+    [SerializeField] private Vector2 attackBoxSize;
+    [SerializeField] private float attackSpeed; 
+    public float damage;
+    public float stunTime;
     private Vector2 localscale;
     [SerializeField]private Rigidbody2D rigid;
     private bool isAggroling;
+    private bool watchingLeft = true;
     private int nextMove;
-    private void Start()
+    public bool isAttacking;
+    private readonly int _isWalking = Animator.StringToHash("isWalking");
+
+    public void Start()
     {
         localscale = transform.localScale;
         //rigid = GetComponent<Rigidbody2D>();
+        isAttacking = false;
         Invoke("Think",5f);
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
         rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
         if (!isAggroling)
         {
-            if (math.abs(PlayerController.PlayerPos.x - transform.position.x) < AggroRange.x)
+            if (math.abs(PlayerController.PlayerPos.x - transform.position.x) < aggroRange.x)
             {
-                if (math.abs(PlayerController.PlayerPos.y - transform.position.y) < AggroRange.y)
+                if (math.abs(PlayerController.PlayerPos.y - transform.position.y) < aggroRange.y)
                 {
                     isAggroling = true;
                     StartCoroutine("Aggro");
@@ -50,67 +59,84 @@ public class MonsterMove : MonoBehaviour
         }
     }
 
-    IEnumerator Aggro()
+    public IEnumerator Aggro()
     {
         anim.StopPlayback();
-        speed += AggroSpeed;
-        CancelInvoke("Think");
-        while (math.abs(PlayerController.PlayerPos.x - transform.position.x) < AggroRange.x && math.abs(PlayerController.PlayerPos.y - transform.position.y) < AggroRange.y)
+        speed += aggroSpeed;
+        CancelInvoke(nameof(Think));
+        while (math.abs(PlayerController.PlayerPos.x - transform.position.x) < aggroRange.x && math.abs(PlayerController.PlayerPos.y - transform.position.y) < aggroRange.y)
         {
-            if (math.abs(PlayerController.PlayerPos.x - transform.position.x) > 0.5f)
+            if (!isAttacking)
             {
-                rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
-                if (PlayerController.PlayerPos.x - transform.position.x > 0)
+                if (math.abs(PlayerController.PlayerPos.x - transform.position.x) > 0.5f)
                 {
-                    nextMove = 1;
+                    rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
+                    anim.SetBool(_isWalking, true);
+                    if (PlayerController.PlayerPos.x - transform.position.x > 0)
+                    {
+                        watchingLeft = false;
+                        nextMove = 1;
+                        transform.localScale = new Vector3(-1 * localscale.x, transform.localScale.y);
+                    }
+                    else
+                    {
+                        watchingLeft = true;
+                        nextMove = -1;
+                        transform.localScale = new Vector3(localscale.x, transform.localScale.y);
+                    }
                 }
                 else
                 {
-                    nextMove = -1;
+                    nextMove = 0;
+                    anim.SetBool(_isWalking, false);
+                    StartCoroutine(Attack());
                 }
-                if (nextMove == 1)
-                {
-                    transform.localScale = new Vector3(-1 * localscale.x, transform.localScale.y);
-                    anim.SetBool("isWalking", true);
-                }
-                else if (nextMove == -1)
-                {
-                    transform.localScale = new Vector3(localscale.x, transform.localScale.y);
-                    anim.SetBool("isWalking", true);
-                }
-            }
-            else
-            {
-                nextMove = 0;
-                anim.SetBool("isWalking",false);
             }
             yield return null;
         }
 
-        speed -= AggroSpeed;
+        speed -= aggroSpeed;
         isAggroling = false;
-        Invoke("Think",2f);
+        Invoke(nameof(Think),2f);
         yield break;
     }
 
-    void Think()
+    public void Think()
     {
         speed = 1f;
         nextMove = Random.Range(-1, 2);
         Invoke("Think",5f);
         if (nextMove == 1)
         {
+            watchingLeft = false;
             transform.localScale = new Vector3(-1*localscale.x, transform.localScale.y);
-            anim.SetBool("isWalking",true);
+            anim.SetBool(_isWalking,true);
         }
         else if (nextMove == -1)
         {
+            watchingLeft = true;
             transform.localScale = new Vector3(localscale.x, transform.localScale.y);
-            anim.SetBool("isWalking",true);
+            anim.SetBool(_isWalking,true);
         }
         else
         {
-            anim.SetBool("isWalking",false);
+            anim.SetBool(_isWalking,false);
         }
+    }
+
+    public IEnumerator Attack()
+    {
+        isAttacking = true;
+        yield return new WaitForSeconds(attackSpeed);
+        Debug.Log("공격하다");
+        RaycastHit2D ray = Physics2D.BoxCast(transform.position, new Vector2(0.01f, attackBoxSize.y), 0,
+            watchingLeft ? Vector2.left : Vector2.right, attackBoxSize.x, LayerMask.GetMask("Player"));
+        if (ray)
+        {
+            if(ray.transform.CompareTag("Player"))
+                PlayerController.GotAttack(damage, stunTime);
+        }
+        isAttacking = false;
+        yield break;
     }
 }

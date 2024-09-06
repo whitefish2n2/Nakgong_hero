@@ -24,6 +24,7 @@ public class DefaultMonster : MonoBehaviour
     private RectTransform HpBar;
     private SpriteRenderer Object_Sprite;
     private bool youCantHurtMe = false;
+    private Camera mainCam;
 
     void Start()
     {
@@ -37,31 +38,33 @@ public class DefaultMonster : MonoBehaviour
         stans *= InvManager.Instance.Difficulty;
         stanstemp = stans;
         HP_Temp = HP;
+        mainCam = Camera.main;
     }
     private void Update()
     {
         HpBar.position =
-            Camera.main.WorldToScreenPoint(new Vector2(transform.position.x, transform.position.y + distance));
+            mainCam.WorldToScreenPoint(new Vector2(transform.position.x, transform.position.y + distance));
     }
-    public void gotattack(string AttackMode, float Damage, float stansMinus)
+    public void GotAttack(string AttackMode, float Damage, float stansMinus)
     {
         if (youCantHurtMe)
         {
             return;
         }
         
-        if (AttackMode == "Default")
+        switch (AttackMode)
         {
-            float RealDamage = Damage + InvManager.Instance.AirBonePower/100f;
-            attack_Effect(RealDamage, stansMinus);
-            StartCoroutine(invincibility(1f));
-            return;
-        }
-
-        if (AttackMode == "Throw")
-        {
-            attack_Effect(Damage, stansMinus);
-            StartCoroutine(invincibility(0.3f));
+            case "Default":
+            {
+                float realDamage = Damage + InvManager.Instance.AirBonePower/100f;
+                attack_Effect(realDamage, stansMinus);
+                StartCoroutine(Invincibility(1f));
+                return;
+            }
+            case "Throw":
+                attack_Effect(Damage, stansMinus);
+                StartCoroutine(Invincibility(0.3f));
+                break;
         }
     }
 
@@ -71,12 +74,12 @@ public class DefaultMonster : MonoBehaviour
         GameObject instance = Instantiate(DamagePrefabManager.DamagePrefab,
             Canvas.transform);
         instance.transform.position =
-            Camera.main.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
+            mainCam.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
         instance.GetComponent<TextMeshProUGUI>().text = ((int)damage).ToString();
         instance.GetComponent<Animator>().Play("DamageOn");
         Destroy(instance,1f);
         HP -= damage;
-        HPUpdate();
+        HpUpdate();
         stans -= stanceMinus;
         if (stans <= 0f)
         {
@@ -97,7 +100,7 @@ public class DefaultMonster : MonoBehaviour
         }
         stans = stanstemp;
     }
-    private void HPUpdate()
+    private void HpUpdate()
     {
         LeftbarInstance.GetComponent<Image>().fillAmount = HP / HP_Temp;
         if (HP / HP_Temp < 0.3f)
@@ -120,10 +123,10 @@ public class DefaultMonster : MonoBehaviour
     private void Dead()
     {
         Debug.Log("으앙죽음ㅜㅜ");
-        Destroy(gameObject);
+        Destroy(gameObject);//죽는 메서드(풀링 관리, 사망 애니메이션 재생)
     }
 
-    IEnumerator invincibility(float time)
+    private IEnumerator Invincibility(float time)
     {
         youCantHurtMe = true;
         yield return new WaitForSeconds(time);

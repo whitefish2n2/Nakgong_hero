@@ -15,6 +15,7 @@ TagManager:
   - MovingObject
   - Moving
   - Cover
+  - MovingFloor
   layers:
   - Default
   - TransparentFX

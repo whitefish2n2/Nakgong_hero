@@ -23,7 +23,7 @@ public class Deager : MonoBehaviour
         {
             if (other.CompareTag("DefaultMonster"))
             {
-                other.GetComponent<DefaultMonster>().gotattack("Throw", InvManager.Instance.AttackPower*1371, InvManager.Instance.stans*40);
+                other.GetComponent<DefaultMonster>().GotAttack("Throw", InvManager.Instance.AttackPower*1371, InvManager.Instance.stans*40);
             }
         }
         
