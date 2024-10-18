@@ -27,12 +27,12 @@ public class CommonItemOBJ : MonoBehaviour
 
     IEnumerator WatchChecker()
     {
-        while (Vector2.Distance(transform.position, PlayerController.PlayerPos) < 3f)
+        while (Vector2.Distance(transform.position, PlayerController.Instance.playerPos) < 3f)
         {
             if (!dontcheck)
             {
                 if(interactOnUser)
-                    ItemInteract.Instance.InteractOnHere(new Vector2(PlayerController.PlayerPos.x-0.4f, PlayerController.PlayerPos.y + 1f));
+                    ItemInteract.Instance.InteractOnHere(new Vector2(PlayerController.Instance.playerPos.x-0.4f, PlayerController.Instance.playerPos.y + 1f));
                 else
                     ItemInteract.Instance.InteractOnHere(new Vector2(transform.position.x, transform.position.y + 1f));
                 if (Input.GetKeyDown(KeyCode.F))
