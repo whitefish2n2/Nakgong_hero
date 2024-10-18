@@ -10,6 +10,7 @@ public class StartSceneManager : MonoBehaviour
     public void pressAnyButton()
     {
         baseObject.GetComponent<PlayableDirector>().Play();
+        
         foreach(var o in titles)
         {
             o.SetActive(false);

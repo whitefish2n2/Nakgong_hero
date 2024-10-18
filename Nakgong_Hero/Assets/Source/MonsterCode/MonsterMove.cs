@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Source.MonsterCode;
 using Unity.Mathematics;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -17,17 +18,18 @@ public class MonsterMove : MonoBehaviour
     [SerializeField] private float attackSpeed; 
     public float damage;
     public float stunTime;
-    private Vector2 localscale;
+    private Vector2 _localScale;
     [SerializeField]private Rigidbody2D rigid;
-    private bool isAggroling;
+    private bool _isAggroling;
     private bool watchingLeft = true;
     private int nextMove;
     public bool isAttacking;
     private readonly int _isWalking = Animator.StringToHash("isWalking");
+    public DefaultMonster monster;
 
     public void Start()
     {
-        localscale = transform.localScale;
+        _localScale = transform.localScale;
         //rigid = GetComponent<Rigidbody2D>();
         isAttacking = false;
         Invoke("Think",5f);
@@ -36,13 +38,13 @@ public class MonsterMove : MonoBehaviour
     public void FixedUpdate()
     {
         rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
-        if (!isAggroling)
+        if (!_isAggroling)
         {
-            if (math.abs(PlayerController.PlayerPos.x - transform.position.x) < aggroRange.x)
+            if (math.abs(PlayerController.Instance.playerPos.x - transform.position.x) < aggroRange.x)
             {
-                if (math.abs(PlayerController.PlayerPos.y - transform.position.y) < aggroRange.y)
+                if (math.abs(PlayerController.Instance.playerPos.y - transform.position.y) < aggroRange.y)
                 {
-                    isAggroling = true;
+                    _isAggroling = true;
                     StartCoroutine("Aggro");
                 }
             }
@@ -64,25 +66,25 @@ public class MonsterMove : MonoBehaviour
         anim.StopPlayback();
         speed += aggroSpeed;
         CancelInvoke(nameof(Think));
-        while (math.abs(PlayerController.PlayerPos.x - transform.position.x) < aggroRange.x && math.abs(PlayerController.PlayerPos.y - transform.position.y) < aggroRange.y)
+        while (math.abs(PlayerController.Instance.playerPos.x - transform.position.x) < aggroRange.x && math.abs(PlayerController.Instance.playerPos.y - transform.position.y) < aggroRange.y)
         {
             if (!isAttacking)
             {
-                if (math.abs(PlayerController.PlayerPos.x - transform.position.x) > 0.5f)
+                if (math.abs(PlayerController.Instance.playerPos.x - transform.position.x) > 0.5f)
                 {
                     rigid.velocity = new Vector2(nextMove * speed, rigid.velocity.y);
                     anim.SetBool(_isWalking, true);
-                    if (PlayerController.PlayerPos.x - transform.position.x > 0)
+                    if (PlayerController.Instance.playerPos.x - transform.position.x > 0)
                     {
                         watchingLeft = false;
                         nextMove = 1;
-                        transform.localScale = new Vector3(-1 * localscale.x, transform.localScale.y);
+                        transform.localScale = new Vector3(-1 * _localScale.x, transform.localScale.y);
                     }
                     else
                     {
                         watchingLeft = true;
                         nextMove = -1;
-                        transform.localScale = new Vector3(localscale.x, transform.localScale.y);
+                        transform.localScale = new Vector3(_localScale.x, transform.localScale.y);
                     }
                 }
                 else
@@ -96,7 +98,7 @@ public class MonsterMove : MonoBehaviour
         }
 
         speed -= aggroSpeed;
-        isAggroling = false;
+        _isAggroling = false;
         Invoke(nameof(Think),2f);
         yield break;
     }
@@ -109,13 +111,13 @@ public class MonsterMove : MonoBehaviour
         if (nextMove == 1)
         {
             watchingLeft = false;
-            transform.localScale = new Vector3(-1*localscale.x, transform.localScale.y);
+            transform.localScale = new Vector3(-1*_localScale.x, transform.localScale.y);
             anim.SetBool(_isWalking,true);
         }
         else if (nextMove == -1)
         {
             watchingLeft = true;
-            transform.localScale = new Vector3(localscale.x, transform.localScale.y);
+            transform.localScale = new Vector3(_localScale.x, transform.localScale.y);
             anim.SetBool(_isWalking,true);
         }
         else
@@ -129,12 +131,12 @@ public class MonsterMove : MonoBehaviour
         isAttacking = true;
         yield return new WaitForSeconds(attackSpeed);
         Debug.Log("공격하다");
-        RaycastHit2D ray = Physics2D.BoxCast(transform.position, new Vector2(0.01f, attackBoxSize.y), 0,
+        RaycastHit2D[] ray = Physics2D.BoxCastAll(transform.position, new Vector2(0.01f, attackBoxSize.y), 0,
             watchingLeft ? Vector2.left : Vector2.right, attackBoxSize.x, LayerMask.GetMask("Player"));
-        if (ray)
+        foreach(var o in ray)
         {
-            if(ray.transform.CompareTag("Player"))
-                PlayerController.GotAttack(damage, stunTime);
+            if(o.transform.CompareTag("Player"))
+                PlayerController.Instance.GotAttack(damage, stunTime);
         }
         isAttacking = false;
         yield break;

@@ -22,7 +22,7 @@ public class MovingObject : MonoBehaviour
         var tagTemp = transform.tag;
         gameObject.transform.tag = "Moving";
         if(stopPlayer)
-            PlayerController.Stop();
+            PlayerController.Instance.Stop();
         while (elapsedTime < time)
         {
             gameObject.transform.position = Vector2.Lerp(from, to, elapsedTime / time);
@@ -32,7 +32,7 @@ public class MovingObject : MonoBehaviour
         gameObject.transform.position = to;
         gameObject.transform.tag = tagTemp;
         if (stopPlayer)
-            PlayerController.DisStop();
+            PlayerController.Instance.DisStop();
         MoveEnd();
     }
 }
