@@ -342,6 +342,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_isCanUseEarthCrushing)
         {
+            StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
             StartCoroutine(CoolBool(1, (v=> _isCanUseEarthCrushing = v)));
             RaycastHit2D[] rayR = Physics2D.BoxCastAll(transform.position, new Vector2(0.01f, earthCrushingSize.y), 0,
                 Vector2.right, earthCrushingSize.x, LayerMask.GetMask("Monster"));
