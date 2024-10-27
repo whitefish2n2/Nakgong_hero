@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Source.PlayerCode;
 using UnityEngine;
 
 public class GroundDeagerCheck : MonoBehaviour
@@ -13,7 +14,7 @@ public class GroundDeagerCheck : MonoBehaviour
         {
             if (PlayerController.Instance.isThrowing && !PlayerController.Instance.isGetHooking)
             {
-                global::Deager.isCrashWithWall = true;
+                global::Source.PlayerCode.Deager.isCrashWithWall = true;
             }
         }
     }

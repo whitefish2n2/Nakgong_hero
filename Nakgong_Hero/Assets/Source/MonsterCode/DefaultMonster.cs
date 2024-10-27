@@ -1,6 +1,9 @@
 using System.Collections;
+using Source.Item;
+using Source.PlayerCode;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -8,15 +11,16 @@ namespace Source.MonsterCode
 {
     public class DefaultMonster : MonoBehaviour
     {
-        [SerializeField]private float HP;
+        [FormerlySerializedAs("HP")] [SerializeField]private float hp;
         private float _hpTemp;
         [SerializeField] private float stans; 
-        [SerializeField] private float KnockbackForce;
+        [FormerlySerializedAs("KnockbackForce")] [SerializeField] private float knockbackForce;
         private Rigidbody2D _thisRigidbody2D;
         private float _stansTemp;
         public float damage;
+        [FormerlySerializedAs("leftHP_Bar")]
         [Header("HP_BAR")]
-        [SerializeField] private GameObject leftHP_Bar;
+        [SerializeField] private GameObject leftHpBar;
         private GameObject _canvas;
         [SerializeField] private float distance;
         private GameObject _leftBarInstance;
@@ -29,15 +33,15 @@ namespace Source.MonsterCode
         private void Start()
         {
             _canvas = GameObject.FindGameObjectWithTag("Canvas");
-            _leftBarInstance = Instantiate(leftHP_Bar, _canvas.transform);
+            _leftBarInstance = Instantiate(leftHpBar, _canvas.transform);
             _hpBar = _leftBarInstance.GetComponent<RectTransform>();
             _thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
             _objectSprite = gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
             _leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
-            HP *= InvManager.Instance.Difficulty;
-            stans *= InvManager.Instance.Difficulty;
+            hp *= InvManager.Instance.difficulty;
+            stans *= InvManager.Instance.difficulty;
             _stansTemp = stans;
-            _hpTemp = HP;
+            _hpTemp = hp;
             _mainCam = Camera.main;
         }
         private void Update()
@@ -61,7 +65,7 @@ namespace Source.MonsterCode
             switch (AttackMode)
             {
                 case "Default":
-                    float realDamage = Damage + InvManager.Instance.AirBonePower/100f;
+                    float realDamage = Damage + InvManager.Instance.airBonePower/100f;
                     attack_Effect(realDamage);
                     KnockBack(stansMinus);
                     StartCoroutine(Invincibility(0.1f));
@@ -99,7 +103,7 @@ namespace Source.MonsterCode
             instance.GetComponent<TextMeshProUGUI>().text = ((int)dmg).ToString();
             instance.GetComponent<Animator>().Play("DamageOn");
             Destroy(instance,1f);
-            HP -= dmg;
+            hp -= dmg;
             HpUpdate();
         }
 
@@ -108,8 +112,8 @@ namespace Source.MonsterCode
             stans -= stanceMinus;
             if (stans > 0f) return;
             _thisRigidbody2D.AddForce(gameObject.transform.position.x - PlayerController.Instance.playerPos.x > 0
-                ? new Vector2(1f * KnockbackForce - stans, InvManager.Instance.AirBonePower)
-                : new Vector2(-1f * KnockbackForce, InvManager.Instance.AirBonePower));
+                ? new Vector2(1f * knockbackForce - stans, InvManager.Instance.airBonePower)
+                : new Vector2(-1f * knockbackForce, InvManager.Instance.airBonePower));
             stans = _stansTemp;
         }
 
@@ -122,12 +126,12 @@ namespace Source.MonsterCode
         }
         private void HpUpdate()
         {
-            _leftBarInstance.GetComponent<Image>().fillAmount = HP / _hpTemp;
-            if (HP / _hpTemp < 0.3f)
+            _leftBarInstance.GetComponent<Image>().fillAmount = hp / _hpTemp;
+            if (hp / _hpTemp < 0.3f)
             {
                 _leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(180, 0, 0,255);
             }
-            else if (HP / _hpTemp < 0.7f)
+            else if (hp / _hpTemp < 0.7f)
             {
                 _leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(225, 80, 0,255);
             }
@@ -135,7 +139,7 @@ namespace Source.MonsterCode
             {
                 _leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(20, 140, 0,255);
             }
-            if (HP <= 0f)
+            if (hp <= 0f)
             {
                 Dead();
             }

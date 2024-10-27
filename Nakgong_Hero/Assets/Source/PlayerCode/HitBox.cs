@@ -1,21 +1,22 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Source.Item;
 using Source.MonsterCode;
 using UnityEngine;
 
-public class HitBox : MonoBehaviour
+namespace Source.PlayerCode
 {
-    private void OnTriggerEnter2D(Collider2D other)
+    public class HitBox : MonoBehaviour
     {
-        if (other.gameObject.CompareTag("DefaultMonster"))
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            other.gameObject.GetComponent<DefaultMonster>()
-                .GotAttack(PlayerController.Instance.attackMode, InvManager.Instance.AttackPower, InvManager.Instance.stans);
-        }
-        else if (other.gameObject.CompareTag("MobGenerator"))
-        {
-            other.GetComponent<MobGenerator>().Trigger();
+            if (other.gameObject.CompareTag("DefaultMonster"))
+            {
+                other.gameObject.GetComponent<DefaultMonster>()
+                    .GotAttack(PlayerController.Instance.attackMode, InvManager.Instance.attackPower, InvManager.Instance.stans);
+            }
+            else if (other.gameObject.CompareTag("MobGenerator"))
+            {
+                other.GetComponent<MobGenerator>().Trigger();
+            }
         }
     }
 }

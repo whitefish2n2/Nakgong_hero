@@ -1,95 +1,77 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Items;
-using Unity.Mathematics;
-using UnityEditor;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class InvManager : MonoBehaviour
+namespace Source.Item
 {
-    public static InvManager Instance;
-    //플레이어 속도
-    public float speed;
-    public float startSpeed;
-    public float shiftSpeedPlus;
-    //플레이어 점프력
-    public float jumpPower;
-    //플레이어 공격력
-    public float AttackPower;
-    //플레이어 스탠스 파괴율
-    public float stans;
-    //에어본 세기
-    public float AirBonePower;
-    //그래비티 스케일
-    public float GravityScale;
-    public float startGravityScale;
-    public float GravityScalePlus;
-    //체력
-    public float HP;
-    public float MaxHP;
-    //골드
-    public float Gold;
-    //난이도
-    public float Difficulty;
-    private void Awake()
+    public class InvManager : MonoBehaviour
     {
-        DontDestroyOnLoad(gameObject);
-        AttackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
-        stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
-        HP = 50f;
-        MaxHP = 100f;
-        jumpPower = 5f;
-        startSpeed = 300f;
-        shiftSpeedPlus = 100f;
-        speed = startSpeed;
-        startGravityScale = 1f;
-        GravityScalePlus = 10f;
-        AirBonePower = 0f;
-        stans = 100f;
-        Difficulty = 1f;
-        Instance = this;
-    }
-
-    /// <summary>
-    /// 커먼 아이템 얻는 함수
-    /// </summary>
-    /// <param name="CommonItem"></param>
-    /// <summary>
-    /// 특수 아이템 얻는 함수
-    /// </summary>
-    /// <param name="특수 아이템"></param>
-
-
-
-
-
-    public void GetHone()
-    {
-        AttackPower += 5f;
-    }
-
-    public void GetWeight()
-    {
-        GravityScalePlus += 0.5f;
-    }
-    public void GetRedPortion()
-    {
-        if (HP < 100f)
+        public static InvManager Instance;
+        //플레이어 속도
+        public float speed;
+        public float startSpeed;
+        public float shiftSpeedPlus;
+        //플레이어 점프력
+        public float jumpPower;
+        //플레이어 공격력
+        public float attackPower;
+        //플레이어 스탠스 파괴율
+        public float stans;
+        //에어본 세기
+        public float airBonePower;
+        //그래비티 스케일
+        public float gravityScale;
+        public float startGravityScale;
+        public float gravityScalePlus;
+        //체력
+        public float hp;
+        public float maxHp;
+        //골드
+        public float gold;
+        //난이도
+        public float difficulty;
+        private void Awake()
         {
-            HP += Random.Range(5, 10);
-            if (HP < MaxHP)
-            {
-                HP = MaxHP;
-            }
+            DontDestroyOnLoad(gameObject);
+            attackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
+            stans = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
+            hp = 50f;
+            maxHp = 100f;
+            jumpPower = 5f;
+            startSpeed = 300f;
+            shiftSpeedPlus = 100f;
+            speed = startSpeed;
+            startGravityScale = 1f;
+            gravityScalePlus = 10f;
+            airBonePower = 0f;
+            stans = 100f;
+            difficulty = 1f;
+            Instance = this;
         }
-        else
+        public void GetHone()
         {
-            if (HP < MaxHP)
+            attackPower += 5f;
+        }
+
+        public void GetWeight()
+        {
+            gravityScalePlus += 0.5f;
+        }
+        public void GetRedPortion()
+        {
+            if (hp < 100f)
             {
-                HP = MaxHP;
+                hp += Random.Range(5, 10);
+                if (hp < maxHp)
+                {
+                    hp = maxHp;
+                }
+            }
+            else
+            {
+                if (hp < maxHp)
+                {
+                    hp = maxHp;
+                }
             }
         }
     }
