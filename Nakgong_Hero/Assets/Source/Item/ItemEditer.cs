@@ -43,7 +43,7 @@ namespace CommonItemEditor
             {
                 idx = (int)type;
                 var commonItem = CommonItemArray.CommonItems[idx];
-                if (CommonItemArray.toggled[idx] = EditorGUILayout.BeginFoldoutHeaderGroup(CommonItemArray.toggled[idx], $"{((ItemType)type).ToString()}: {commonItem.ItemName}"))
+                if (CommonItemArray.toggled[idx] == EditorGUILayout.BeginFoldoutHeaderGroup(CommonItemArray.toggled[idx], $"{((ItemType)type).ToString()}: {commonItem.ItemName}"))
                 {
                     commonItem.ItemName = EditorGUILayout.TextField("Name", commonItem.ItemName);
                     EditorGUILayout.LabelField("Description");

@@ -26,24 +26,21 @@ public class CommonItemOBJ : MonoBehaviour
         StopCoroutine(WatchChecker());
     }
 
+    public void Get()
+    {
+        itemInfo.Get();
+        DisWatching();
+        if(itemInfo.isDestroyItem)
+            Destroy(gameObject);
+    }
+
     IEnumerator WatchChecker()
     {
-        while (Vector2.Distance(transform.position, PlayerController.Instance.playerPos) < 3f)
+        while (!dontcheck)
         {
-            if (!dontcheck)
-            {
-                if(interactOnUser)
-                    ItemInteract.Instance.InteractOnHere(new Vector2(PlayerController.Instance.playerPos.x-0.4f, PlayerController.Instance.playerPos.y + 1f));
-                else
-                    ItemInteract.Instance.InteractOnHere(new Vector2(transform.position.x, transform.position.y + 1f));
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    itemInfo.Get();
-                    DisWatching();
-                    if(itemInfo.isDestroyItem)
-                        Destroy(gameObject);
-                }
-            }
+            ItemInteract.Instance.InteractOnHere(interactOnUser
+                ? new Vector2(PlayerController.Instance.playerPos.x - 0.4f, PlayerController.Instance.playerPos.y + 1f)
+                : new Vector2(transform.position.x, transform.position.y + 1f));
             yield return null;
         }
         DisWatching();

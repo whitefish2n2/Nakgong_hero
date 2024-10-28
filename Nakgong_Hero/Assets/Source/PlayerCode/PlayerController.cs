@@ -145,33 +145,6 @@ namespace Source.PlayerCode
                 {
                     _sHold = false;
                 }
-
-                if (_isReadyNakgong ||  _horizontal == 0)
-                {
-                    if (_onGround && movingFloor)
-                    {
-                        if (_mfDist == new Vector2(12123, 12123) || _horizontalTemp != 0 || _isJumping)
-                        {
-                            Vector2 position = movingFloor.transform.position;
-                            _mfDist = new Vector2(transform.position.x - position.x,
-                                transform.position.y - position.y);
-                            Debug.Log("reFresh");
-                        }
-                        else
-                            transform.position = (Vector2)movingFloor.transform.position + _mfDist;
-                    
-                    }
-                    else
-                    {
-                        _mfDist = new Vector2(12123, 12123);
-                    }
-                    if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Default"))
-                    {
-                        _anim.StopPlayback();
-                        _anim.Play("Default");
-                    }
-                }
-
                 if (!doNotAttack)
                 {
                     //좌클릭-낙공 우클릭-던지기
@@ -206,39 +179,70 @@ namespace Source.PlayerCode
                         }
                     }
                 }
-
-                _horizontalTemp = _horizontal;
             }
+            if (_isReadyNakgong ||  _horizontal == 0)
+            {
+                if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Default"))
+                {
+                    _anim.StopPlayback();
+                    _anim.Play("Default");
+                }
+            }
+            if (_onGround && movingFloor)
+            {
+                Debug.Log(movingFloor.transform.name);
+                Debug.Log(_mfDist);
+                if (_mfDist == new Vector2(12123, 12123) || _horizontalTemp != 0 || _isJumping)
+                {
+                    Vector2 position = movingFloor.transform.position;
+                    _mfDist = new Vector2(transform.position.x - position.x,
+                        transform.position.y - position.y);
+                    transform.position = (Vector2)movingFloor.transform.position + _mfDist;
+                    Debug.Log("reFresh");
+                }
+                else
+                    transform.position = (Vector2)movingFloor.transform.position + _mfDist;
+                    
+            }
+            else
+            {
+                _mfDist = new Vector2(12123, 12123);
+            }
+            _horizontalTemp = _horizontal;
             if (_onGround)
                 throwOnAirCount = _throwOnAirCountTemp;
             //아이템 인터렉트 코드
             RaycastHit2D interactRay = Physics2D.Raycast(new Vector2(playerPos.x, playerPos.y - 1f),
                 (_goingRight ? Vector3.right:Vector3.left), 2, LayerMask.GetMask("Items", "MovingObjects"));
-            if (interactRay.collider is not null)
+            
+            if (interactRay.collider?.gameObject.CompareTag("CommonItem") ?? false)
             {
-                if (interactRay.collider.gameObject.CompareTag("CommonItem"))
+                if (_watchingItemTemp != interactRay.collider)
                 {
-                    ItemInteract.Instance.ChangeText("획득");
                     if (_watchingItemTemp)
                     {
                         _watchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
                     }
-
-                    interactRay.collider.GetComponent<CommonItemOBJ>().Watching();
-                    _watchingItemTemp = interactRay.collider;
+                    if (interactRay.collider is not null)
+                    {
+                        var objCode = interactRay.collider.GetComponent<CommonItemOBJ>();
+                        objCode.Watching();
+                        ItemInteract.Instance.ChangeText(objCode.itemInfo.interactionDescription);
+                    }
                 }
-                else if (interactRay.collider.gameObject.CompareTag("MovingObject"))
+                if (Input.GetKeyDown(KeyCode.F))
                 {
-                    ItemInteract.Instance.ChangeText("상호작용");
-                    if (_watchingItemTemp)
-                    {
-                        _watchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
-                    }
-
-                    interactRay.collider.GetComponent<CommonItemOBJ>().Watching();
-                    _watchingItemTemp = interactRay.collider;
+                    if (interactRay.collider) interactRay.collider.GetComponent<CommonItemOBJ>().Get();
                 }
             }
+            else
+            {
+                if (_watchingItemTemp)
+                {
+                    _watchingItemTemp.GetComponent<CommonItemOBJ>().DisWatching();
+                }
+            }
+            _watchingItemTemp = interactRay.collider;
         }
 
         private void FixedUpdate()

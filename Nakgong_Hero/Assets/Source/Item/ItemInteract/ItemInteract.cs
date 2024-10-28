@@ -8,9 +8,11 @@ public class ItemInteract : MonoBehaviour
 {
     public static ItemInteract Instance;
     private TMP_Text TextPanel;
+    private Camera _camera;
 
     private void Awake()
     {
+        _camera = Camera.main;
         TextPanel = gameObject.transform.GetChild(0).GetComponent<TMP_Text>();
         Instance = this;
         gameObject.SetActive(false);
@@ -23,7 +25,7 @@ public class ItemInteract : MonoBehaviour
 
     public void InteractOnHere(Vector3 Position)
     {
-        transform.position = Camera.main.WorldToScreenPoint(Position);
+        transform.position = _camera.WorldToScreenPoint(Position);
         gameObject.SetActive(true);
     }
 

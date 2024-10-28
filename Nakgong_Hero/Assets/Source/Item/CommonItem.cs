@@ -18,6 +18,7 @@ public class CommonItem
     public GameObject prefab;
     public Sprite InvSprite;
     [TextArea] public string Discription;
+    public string interactionDescription = "획득";
     public UnityEvent OnGet;
 
     public void Get()

@@ -100,10 +100,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24fe47c73bd022e499035c51a76b206b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemName: "\uB514\uD3F4\uD2B8 \uC544\uC774\uD15C"
-  ItemType: 0
-  InvSprite: {fileID: 21300000, guid: 431567f0693c41c4e862339abb4d3cc0, type: 3}
-  Discription: "\uC544\uC774\uD15C \uC0DD\uC131\uC5D0 \uC2E4\uD328 \uD588\uC2B5\uB2C8\uB2E4."
+  itemInfo:
+    ItemType: 0
+    isDestroyItem: 1
+    ItemName: "\uBE68\uAC15 \uD3EC\uC158"
+    prefab: {fileID: 7227642387917128946}
+    InvSprite: {fileID: 21300000, guid: 431567f0693c41c4e862339abb4d3cc0, type: 3}
+    Discription: "\uCCB4\uB825\uC774 \uC644\uC804\uD788 \uD68C\uBCF5\uB429\uB2C8\uB2E4."
+    interactionDescription: "\uB9C8\uC2DC\uAE30"
+    OnGet:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: InvManager, Assembly-CSharp
+          m_MethodName: GetRedPortion
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  interactOnUser: 0
 --- !u!50 &2663320133545229001
 Rigidbody2D:
   serializedVersion: 4
