@@ -5,6 +5,7 @@ using Source.Item;
 using Source.MonsterCode;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Source.PlayerCode
@@ -21,7 +22,9 @@ namespace Source.PlayerCode
 
         private Deager _deager;
 
-        [Header("버츄얼 카메라")] [SerializeField] private CinemachineVirtualCamera vCam;
+        [Header("버츄얼 카메라")] 
+        [SerializeField] private CinemachineBrain cinemachineBrain;
+        [SerializeField] private CinemachineVirtualCamera vCam;
         private CinemachineBasicMultiChannelPerlin _noise;
         [SerializeField] private CinemachineVirtualCamera vNakgongCam;
 
@@ -71,6 +74,9 @@ namespace Source.PlayerCode
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(cinemachineBrain);
+            DontDestroyOnLoad(vCam);
+            DontDestroyOnLoad(vNakgongCam);
             _rigid = gameObject.GetComponent<Rigidbody2D>();
             _anim = gameObject.GetComponent<Animator>();
             _deager = sword.GetComponent<Deager>();
@@ -190,8 +196,6 @@ namespace Source.PlayerCode
             }
             if (_onGround && movingFloor)
             {
-                Debug.Log(movingFloor.transform.name);
-                Debug.Log(_mfDist);
                 if (_mfDist == new Vector2(12123, 12123) || _horizontalTemp != 0 || _isJumping)
                 {
                     Vector2 position = movingFloor.transform.position;
@@ -264,6 +268,15 @@ namespace Source.PlayerCode
         {
             isStop = false;
         }
+
+        public void BeAttackAble()
+        {
+            doNotAttack = false;
+        }
+        public void BeAttackDisable()
+        {
+            doNotAttack = true;
+        }
         //오른쪽으로 이동 애니메이션 관리
         private void GoRight()
         {
@@ -333,7 +346,7 @@ namespace Source.PlayerCode
 
         private void EarthCrushing()
         {
-            if (!_isCanUseEarthCrushing) return;
+            if (!_isCanUseEarthCrushing || doNotAttack) return;
             
             StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
             StartCoroutine(CoolBool(1, (v=> _isCanUseEarthCrushing = v)));
@@ -485,6 +498,30 @@ namespace Source.PlayerCode
         private void ChangeNakgongCam()
         {
             vNakgongCam.Priority = _isNakGonging ? 11 : 9;
+        }
+
+        public void LoadScene(string sceneName, Vector2 newPlayerPos)
+        {
+            StartCoroutine(LoadSceneIE(sceneName, newPlayerPos));
+            
+        }
+
+        private IEnumerator LoadSceneIE(string sceneName, Vector2 newPlayerPos)
+        {
+            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+            if (asyncOperation != null) asyncOperation.allowSceneActivation = false;
+            else throw new Exception("Scene not found");
+            while (!asyncOperation.isDone)
+            {
+                Debug.Log(asyncOperation.progress);
+                if (asyncOperation.progress >= 0.9f)
+                {
+                    asyncOperation.allowSceneActivation = true;
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+            transform.position = newPlayerPos;
+            SceneManager.LoadScene(sceneName);
         }
     }
 }

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Source.PlayerCode;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 public class StartSceneManager : MonoBehaviour
 {
@@ -16,5 +18,10 @@ public class StartSceneManager : MonoBehaviour
             o.SetActive(false);
         }
     }
-    
+
+    public void LoadStartScene()
+    {
+        PlayerController.Instance.BeAttackAble();
+        PlayerController.Instance.LoadScene("Stage1",new Vector2(-14f,126f));
+    }
 }
