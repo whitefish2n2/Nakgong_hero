@@ -35,7 +35,7 @@ namespace Source.MonsterCode
 
         public void FixedUpdate()
         {
-            rigid.velocity = new Vector2(_nextMove * speed, rigid.velocity.y);
+            rigid.linearVelocity = new Vector2(_nextMove * speed, rigid.linearVelocity.y);
             if (!_isAggroling)
             {
                 if (math.abs(PlayerController.Instance.playerPos.x - transform.position.x) < aggroRange.x)
@@ -68,7 +68,7 @@ namespace Source.MonsterCode
                 {
                     if (math.abs(PlayerController.Instance.playerPos.x - transform.position.x) > 0.5f)
                     {
-                        rigid.velocity = new Vector2(_nextMove * speed, rigid.velocity.y);
+                        rigid.linearVelocity = new Vector2(_nextMove * speed, rigid.linearVelocity.y);
                         anim.SetBool(_isWalking, true);
                         if (PlayerController.Instance.playerPos.x - transform.position.x > 0)
                         {

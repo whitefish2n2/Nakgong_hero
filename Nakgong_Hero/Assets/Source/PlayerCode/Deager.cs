@@ -44,7 +44,7 @@ namespace Source.PlayerCode
             {
                 if (!isCrashWithWall && PlayerController.Instance.isThrowing && !PlayerController.Instance.isGetHooking)
                 {
-                    rigid.velocity = dirvec * ThrowingSpeed;
+                    rigid.linearVelocity = dirvec * ThrowingSpeed;
                     yield return null;
                 }
                 else
@@ -52,7 +52,7 @@ namespace Source.PlayerCode
                     break;
                 }
             }
-            rigid.velocity -= dirvec * ThrowingSpeed;
+            rigid.linearVelocity -= dirvec * ThrowingSpeed;
             StartCoroutine(TurnBack());
         }
 

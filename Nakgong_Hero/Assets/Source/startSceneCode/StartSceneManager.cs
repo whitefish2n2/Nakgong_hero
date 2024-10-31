@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Source.GameManager;
 using Source.PlayerCode;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -22,6 +23,7 @@ public class StartSceneManager : MonoBehaviour
     public void LoadStartScene()
     {
         PlayerController.Instance.BeAttackAble();
-        PlayerController.Instance.LoadScene("Stage1",new Vector2(-14f,126f));
+        SceneLoader.Instance.LoadScene("Stage1",1,new Vector2(-14f,126f));
     }
+    
 }

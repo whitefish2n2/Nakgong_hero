@@ -253,7 +253,7 @@ namespace Source.PlayerCode
         {
             playerPos = gameObject.transform.position;
             playerRotate = gameObject.transform.rotation;
-            _rigid.velocity = new Vector2(_horizontal * InvManager.Instance.speed * Time.deltaTime, _rigid.velocity.y);
+            _rigid.linearVelocity = new Vector2(_horizontal * InvManager.Instance.speed * Time.deltaTime, _rigid.linearVelocity.y);
 
             //debug section
         }
@@ -398,7 +398,7 @@ namespace Source.PlayerCode
             if (_goNakgong)
             {
                 _isReadyNakgong = true;
-                _rigid.velocity = new Vector2(_rigid.velocity.x,InvManager.Instance.jumpPower/2);
+                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower/2);
                 _deager.InstanceTurnBack();
                 NakGong();
                 isGetHooking = false;
@@ -414,7 +414,7 @@ namespace Source.PlayerCode
         IEnumerator Jump()
         {
             _isJumping = true;
-            _rigid.velocity = new Vector2(_rigid.velocity.x,InvManager.Instance.jumpPower);
+            _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower);
             yield return new WaitForSeconds(0.1f);
           
             while (!_onGround)
@@ -423,7 +423,7 @@ namespace Source.PlayerCode
                 {
                     _isReadyNakgong = true;
                     _isJumping = false;
-                    _rigid.velocity = new Vector2(_rigid.velocity.x,InvManager.Instance.jumpPower);
+                    _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower);
                     StartCoroutine(GroundedChecker());
                     throwOnAirCount = _throwOnAirCountTemp;
                     yield break;
@@ -498,30 +498,6 @@ namespace Source.PlayerCode
         private void ChangeNakgongCam()
         {
             vNakgongCam.Priority = _isNakGonging ? 11 : 9;
-        }
-
-        public void LoadScene(string sceneName, Vector2 newPlayerPos)
-        {
-            StartCoroutine(LoadSceneIE(sceneName, newPlayerPos));
-            
-        }
-
-        private IEnumerator LoadSceneIE(string sceneName, Vector2 newPlayerPos)
-        {
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
-            if (asyncOperation != null) asyncOperation.allowSceneActivation = false;
-            else throw new Exception("Scene not found");
-            while (!asyncOperation.isDone)
-            {
-                Debug.Log(asyncOperation.progress);
-                if (asyncOperation.progress >= 0.9f)
-                {
-                    asyncOperation.allowSceneActivation = true;
-                }
-                yield return new WaitForSeconds(0.1f);
-            }
-            transform.position = newPlayerPos;
-            SceneManager.LoadScene(sceneName);
         }
     }
 }
