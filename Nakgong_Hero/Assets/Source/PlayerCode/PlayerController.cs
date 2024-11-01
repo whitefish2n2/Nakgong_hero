@@ -202,7 +202,6 @@ namespace Source.PlayerCode
                     _mfDist = new Vector2(transform.position.x - position.x,
                         transform.position.y - position.y);
                     transform.position = (Vector2)movingFloor.transform.position + _mfDist;
-                    Debug.Log("reFresh");
                 }
                 else
                     transform.position = (Vector2)movingFloor.transform.position + _mfDist;
