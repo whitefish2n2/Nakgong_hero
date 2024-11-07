@@ -12,8 +12,13 @@ public class StartSceneManager : MonoBehaviour
     [SerializeField] private GameObject[] titles;
     public void pressAnyButton()
     {
+        if (Input.GetKey(KeyCode.D))
+        {
+            PlayerController.Instance.DisStop();
+            LoadStartScene();
+            return;
+        }
         baseObject.GetComponent<PlayableDirector>().Play();
-        
         foreach(var o in titles)
         {
             o.SetActive(false);
@@ -23,7 +28,7 @@ public class StartSceneManager : MonoBehaviour
     public void LoadStartScene()
     {
         PlayerController.Instance.BeAttackAble();
-        SceneLoader.Instance.LoadScene("Stage1",1,new Vector2(-14f,126f));
+        SceneLoader.Instance.LoadScene("Stage1",2,new Vector2(-14f,126f));
     }
     
 }

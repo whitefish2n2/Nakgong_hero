@@ -25,7 +25,7 @@ namespace Source.PlayerCode
             {
                 if (other.CompareTag("DefaultMonster"))
                 {
-                    other.GetComponent<DefaultMonster>().GotAttack("Throw", InvManager.Instance.attackPower*1371, InvManager.Instance.stans*40);
+                    other.GetComponent<DefaultMonster>().GotAttack("Throw", InvManager.Instance.attackPower*1371, InvManager.Instance.stansBreak*40);
                 }
             }
         

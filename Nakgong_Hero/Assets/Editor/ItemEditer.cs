@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Items;
+using Source.Item;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -14,7 +14,7 @@ using Object = System.Object;
 namespace CommonItemEditor
 {
     [CustomEditor(typeof(ItemData))]
-    public class CommonItemEditer : UnityEditor.Editor
+    public class CommonItemEditer : Editor
     {
         public override void OnInspectorGUI()
         {

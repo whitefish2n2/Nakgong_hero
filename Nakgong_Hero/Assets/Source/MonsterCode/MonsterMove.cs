@@ -126,9 +126,8 @@ namespace Source.MonsterCode
             isAttacking = true;
             yield return new WaitForSeconds(attackSpeed);
             Debug.Log("공격하다");
-            RaycastHit2D[] ray = { };
-            Physics2D.BoxCastNonAlloc(transform.position, new Vector2(0.01f, attackBoxSize.y), 0, 
-                _watchingLeft ? Vector2.left : Vector2.right, ray, attackBoxSize.x, LayerMask.GetMask("Player"));
+            var ray = Physics2D.BoxCastAll(transform.position, new Vector2(0.01f, attackBoxSize.y), 0, 
+                _watchingLeft ? Vector2.left : Vector2.right, attackBoxSize.x, LayerMask.GetMask("Player"));
         
             foreach(var o in ray)
             {

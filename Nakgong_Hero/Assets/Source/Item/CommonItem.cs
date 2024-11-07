@@ -1,29 +1,39 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Items;
-using Unity.VisualScripting.Dependencies.NCalc;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using Object = System.Object;
 
-[Serializable]
-public class CommonItem
+namespace Source.Item
 {
-    public ItemType ItemType;
-    public bool isDestroyItem = true;
-    public string ItemName;
-    public GameObject prefab;
-    public Sprite InvSprite;
-    [TextArea] public string Discription;
-    public string interactionDescription = "획득";
-    public UnityEvent OnGet;
-
-    public void Get()
+    [Serializable]
+    public class CommonItem
     {
-        OnGet.Invoke();
+        public ItemType ItemType;
+        public bool isDestroyItem = true;
+        public string ItemName;
+        public GameObject prefab;
+        public Sprite InvSprite;
+        [TextArea] public string Discription;
+        public string interactionDescription = "획득";
+        public UnityEvent OnGet;
+
+        public void Get()
+        {
+            OnGet.Invoke();
+        }
+
+        public void Init(CommonItem commonItem)
+        {
+            ItemType = commonItem.ItemType;
+            isDestroyItem = commonItem.isDestroyItem;
+            ItemName = commonItem.ItemName;
+            prefab = commonItem.prefab;
+            InvSprite = commonItem.InvSprite;
+            Discription = commonItem.Discription;
+            interactionDescription = commonItem.interactionDescription;
+            interactionDescription = commonItem.interactionDescription;
+            OnGet = commonItem.OnGet;
+        }
     }
 }
 

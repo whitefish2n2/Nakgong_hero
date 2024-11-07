@@ -61,28 +61,28 @@ namespace Source.GameManager
                 _barRenderer.SetAlpha(fade);
                 yield return null;
             }
+            PlayerController.Instance.Stop();
             //씬 이동
-            while (!asyncOperation.isDone)
-            {
-                _loadBarImage.fillAmount = asyncOperation.progress;
-                if (asyncOperation.progress >= 0.9f)
-                {
-                    yield return new WaitForSeconds(delay);
-                    asyncOperation.allowSceneActivation = true;
-                    break;
-                }
-                yield return null;
-            }
-
-            while (!asyncOperation.isDone)
+            while (asyncOperation.progress <= 0.41f)
             {
                 _loadBarImage.fillAmount = asyncOperation.progress;
                 yield return null;
             }
+            yield return new WaitForSeconds(delay);
+            while (asyncOperation.progress < 0.9f)
+            {
+                _loadBarImage.fillAmount = asyncOperation.progress;
+                yield return null;
+            }
+            yield return new WaitForSeconds(delay);
+            asyncOperation.allowSceneActivation = true;
+            _loadBarImage.fillAmount = 1;
+            yield return new WaitForSeconds(delay);
             PlayerController.Instance.gameObject.transform.position = newPlayerPos;
             //fade out
             elapsedTime = 0;
             Debug.Log(elapsedTime<endFade);
+            PlayerController.Instance.DisStop();
             while (elapsedTime < endFade)
             {
                 elapsedTime += Time.deltaTime;

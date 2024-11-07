@@ -3,6 +3,7 @@ using System.Collections;
 using Cinemachine;
 using Source.Item;
 using Source.MonsterCode;
+using Source.UiCode;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -63,8 +64,8 @@ namespace Source.PlayerCode
     
     
         [Header("상태관리")]
-        [SerializeField] private bool isStop;
-        [SerializeField] private bool doNotAttack;
+        public bool isStop;
+        public bool doNotAttack;
 
         //이전 프레임에 보고 있는 ITEM OBJECT
         private Collider2D _watchingItemTemp;
@@ -91,6 +92,7 @@ namespace Source.PlayerCode
             attackMode = "Default";
             attackBox.SetActive(false);
             _playerCollider = GetComponent<PlayerCollider>();
+            HpUiManager.instance.UpdateHpBar();
         }
 
         private void Update()
@@ -349,18 +351,19 @@ namespace Source.PlayerCode
             
             StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
             StartCoroutine(CoolBool(1, (v=> _isCanUseEarthCrushing = v)));
-            RaycastHit2D[] rayR = { }, rayL = { };
-            Physics2D.BoxCastNonAlloc(transform.position, new Vector2(0.01f, earthCrushingSize.y), 0, Vector2.right, rayR, earthCrushingSize.x, LayerMask.GetMask("Monster"));
-            Physics2D.BoxCastNonAlloc(transform.position, new Vector2(0.01f, earthCrushingSize.y), 0, Vector2.left, rayL, earthCrushingSize.x, LayerMask.GetMask("Monster"));
+            RaycastHit2D[] rayR = { };
+            RaycastHit2D[] rayL = { };
+            Physics2D.RaycastNonAlloc(transform.position, Vector2.right, rayR, earthCrushingSize.x, LayerMask.GetMask("Monster"));
+            Physics2D.RaycastNonAlloc(transform.position, Vector2.left, rayL, earthCrushingSize.x, LayerMask.GetMask("Monster"));
             foreach(var o in rayL)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stans, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stansBreak, 500);
             }
             foreach(var o in rayR)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stans, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stansBreak, 500);
             }
         }
 
@@ -368,8 +371,7 @@ namespace Source.PlayerCode
         public static void GotAttack(float damage, float stunTime)
         {
             InvManager.Instance.hp -= damage;
-            Debug.Log(InvManager.Instance.hp);
-            //스턴 조@지는 코루틴으로
+            HpUiManager.instance.UpdateHpBar();
         }
 
         //대검쪽으로 이동 코루틴
