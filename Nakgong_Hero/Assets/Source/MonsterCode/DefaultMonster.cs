@@ -38,8 +38,8 @@ namespace Source.MonsterCode
             _thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
             _objectSprite = gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
             _leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
-            hp *= InvManager.Instance.difficulty;
-            stans *= InvManager.Instance.difficulty;
+            hp *= InvManager.instance.difficulty;
+            stans *= InvManager.instance.difficulty;
             _stansTemp = stans;
             _hpTemp = hp;
             _mainCam = Camera.main;
@@ -65,7 +65,7 @@ namespace Source.MonsterCode
             switch (AttackMode)
             {
                 case "Default":
-                    float realDamage = Damage + InvManager.Instance.airBonePower/100f;
+                    float realDamage = Damage + InvManager.instance.airBonePower/100f;
                     attack_Effect(realDamage);
                     KnockBack(stansMinus);
                     StartCoroutine(Invincibility(0.1f));
@@ -112,8 +112,8 @@ namespace Source.MonsterCode
             stans -= stanceMinus;
             if (stans > 0f) return;
             _thisRigidbody2D.AddForce(gameObject.transform.position.x - PlayerController.Instance.playerPos.x > 0
-                ? new Vector2(1f * knockbackForce - stans, InvManager.Instance.airBonePower)
-                : new Vector2(-1f * knockbackForce, InvManager.Instance.airBonePower));
+                ? new Vector2(1f * knockbackForce - stans, InvManager.instance.airBonePower)
+                : new Vector2(-1f * knockbackForce, InvManager.instance.airBonePower));
             stans = _stansTemp;
         }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Source.UiCode;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -7,7 +8,7 @@ namespace Source.Item
 {
     public class InvManager : MonoBehaviour
     {
-        public static InvManager Instance;
+        public static InvManager instance;
         //플레이어 속도
         public float speed;
         public float startSpeed;
@@ -16,8 +17,10 @@ namespace Source.Item
         public float jumpPower;
         //플레이어 공격력
         public float attackPower;
+        public float attackPowerMultiple;
         //플레이어 방어력
         public float defense;
+        public float defenseMultiple;
         //플레이어 행운(상자 확률 등에 가중치 적용)
         public float luck;
         //대검 던지기 관련 (빨리 던지거나 빨릳 돌아오는)스탯
@@ -40,8 +43,9 @@ namespace Source.Item
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
-            Instance = this;
+            instance = this;
             attackPower = 3f;//저장 파일에서 저장된 기본값 받아오자-
+            attackPowerMultiple = 1;
             stansBreak = 3f;//몬스터의 스탠스 수치를 얼마나 깎나/기본값
             hp = 100f;
             maxHp = 100f;
@@ -56,20 +60,32 @@ namespace Source.Item
             gold = 0;
             orb = 0;
             luck = 0;
-            defense = 0;
+            defense = 1;
+            defenseMultiple = 1;
             difficulty = 1f;
             
         }
-        public void GetHone()
+
+        public float GetAttackPower()
+        {
+            return attackPower * attackPowerMultiple + 1;
+        }
+
+        public float GetDefense()
+        {
+            return defense * defenseMultiple;
+        }
+        //Instant
+        public void GetHone(CommonItem item)
         {
             attackPower += 5f;
         }
 
-        public void GetWeight()
+        public void GetWeight(CommonItem item)
         {
             gravityScalePlus += 0.5f;
         }
-        public void GetRedPortion()
+        public void GetRedPortion(CommonItem item)
         {
             if (hp < 100f)
             {
@@ -87,5 +103,15 @@ namespace Source.Item
                 }
             }
         }
+
+        //passive
+        public void GetDevilsContract(CommonItem item)
+        {
+            InventoryUiManager.Instance.AddItem(item);
+            attackPowerMultiple *= 1.5f;    
+            defenseMultiple *= 0.5f;
+        }
+        
+        //active
     }
 }

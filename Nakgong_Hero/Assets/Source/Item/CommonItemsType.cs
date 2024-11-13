@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Items
+namespace Source.Item
 {
-    public enum ItemType
+    public enum InstantItemType
     {
         RedPortion,
         Weight,
@@ -13,6 +9,27 @@ namespace Items
         Feather,
         Heart,
         Gold,
-        MoveAbleObject
     }
+
+    public enum ActiveItemType
+    {
+        UpPortal,
+        Void
+    }
+
+    public enum PassiveItemType
+    {
+        DevilsContract
+    }
+
+    public enum ItemCategory
+    {
+        None,
+        Active,
+        Passive,
+        Instance,
+        ActiveAndPassive,
+    }
+
+
 }

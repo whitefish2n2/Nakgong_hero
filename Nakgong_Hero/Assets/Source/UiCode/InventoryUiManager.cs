@@ -5,6 +5,7 @@ using System.Globalization;
 using Source.Item;
 using Source.PlayerCode;
 using TMPro;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Source.UiCode
         [SerializeField] private Image descriptionItemIcon;
         [SerializeField] private Animator descriptionPanelAnimator;
         [SerializeField] private GameObject itemPanel;
+        [SerializeField] private GameObject itemNamePanel;
         [SerializeField] private List<GameObject> itemsList = new();
         [SerializeField] private GameObject uiPanel;
         [SerializeField] private Animator panelAnimator;
@@ -35,41 +37,39 @@ namespace Source.UiCode
         [SerializeField] private List<TextMeshProUGUI> statsText = new();
         private bool _isUiOn;
         private IEnumerator _currentUiSwitchAnim;
-        private IEnumerator _mouseChecker;
+        private IEnumerator _descriptActionManager;
         public static InventoryUiManager Instance;
+        public ItemInInventory currentHoverItem;
         private void Awake()
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
             panelRect = uiPanel.GetComponent<RectTransform>();
             panelRect.localPosition = new Vector3(0,-1500,0);
-            itemDescriptionPanelRect = itemPanel.GetComponent<RectTransform>();
-            _mouseChecker = DescriptionUiPositionFixer();
+            _descriptActionManager = DescriptionUiActionManager();
         }
 
         private void Start()
         {
             ReFreshStats();
-            uiPanel.SetActive(false);
-            
+            descriptionPanelAnimator.Play("DescriptFadeOut");
         }
 
         public void SwitchInvUi()
         {
             if (_isUiOn)
             {
-                StopCoroutine(_mouseChecker);
-                _isUiOn = false;
+                StopCoroutine(_descriptActionManager);
                 if (_currentUiSwitchAnim != null)
                 {
                     StopCoroutine(_currentUiSwitchAnim);
                 }
                 _currentUiSwitchAnim = UI_Down();
+                
             }
             else
             {
-                StartCoroutine(_mouseChecker);
-                _isUiOn = true;
+                StartCoroutine(_descriptActionManager);
                 if (_currentUiSwitchAnim != null)
                 {
                     StopCoroutine(_currentUiSwitchAnim);
@@ -94,34 +94,39 @@ namespace Source.UiCode
         {
             var o = Instantiate(invItemPrefab, itemPanel.GetComponent<RectTransform>(), true);
             itemsList.Add(o);
-            var oItem = o.GetComponent<CommonItem>();
+            var oItem = o.GetComponent<ItemInInventory>();
             oItem.Init(item);
             o.GetComponent<RectTransform>().localPosition = new Vector2(
                 itemsList.Count % maxInOneRow * colInterval + 100, itemsList.Count / maxInOneRow * -rowInterval - 100);
         }
 
-        public void RemoveItem(CommonItem item)
+        public void RemoveItem(ItemInInventory item)
         {
-            throw new NotImplementedException();
+            itemsList.Remove(item.gameObject);
+            item.Remove();
+            UpdateItems();
         }
 
-        public void HoverItem(CommonItem item)
+        public void HoverItem(ItemInInventory item)
         {
-            itemDescriptionName.text = item.ItemName;
-            itemDescriptionBody.text = item.Discription;
-            descriptionItemIcon.sprite = item.InvSprite;
+            itemDescriptionName.text = item.itemInfo.ItemName;
+            itemDescriptionBody.text = item.itemInfo.Discription;
+            descriptionItemIcon.sprite = item.itemInfo.InvSprite;
+            currentHoverItem = item;
             descriptionPanelAnimator.Play("DescriptFadeIn");
         }
 
         public void DisHoverItem()
         {
             descriptionPanelAnimator.Play("DescriptFadeOut");
+            currentHoverItem = null;
         }
-        private IEnumerator DescriptionUiPositionFixer()
+        private IEnumerator DescriptionUiActionManager()
         {
             while (true)
             {
                 itemDescriptionPanelRect.position = Input.mousePosition;
+                itemDescriptionPanelRect.anchoredPosition = new Vector2(math.clamp(itemDescriptionPanelRect.anchoredPosition.x,-250,1200), math.clamp(itemDescriptionPanelRect.anchoredPosition.y,-240,240));
                 yield return null;
             }
             // ReSharper disable once IteratorNeverReturns
@@ -132,6 +137,7 @@ namespace Source.UiCode
             Time.timeScale = 0f;
             PlayerController.Instance.Stop();
             uiPanel.SetActive(true);
+            _isUiOn = true;
             while (panelRect.localPosition.y < 0)
             {
                 panelRect.localPosition += Vector3.up * (Time.unscaledDeltaTime * uiSpeed);
@@ -145,6 +151,7 @@ namespace Source.UiCode
             Time.timeScale = 1f;
             PlayerController.Instance.DisStop();
             panelAnimator.Play("Umzzil");
+            _isUiOn = false;
             yield return new WaitForSecondsRealtime(0.1f);
             while (uiPanel.transform.localPosition.y > -1500)
             {
@@ -170,16 +177,16 @@ namespace Source.UiCode
         private void ReFreshStats()
         {
             Debug.Log(statsText[0].text);
-            statsText[(int)StatListIndex.Gold].text = ((int)InvManager.Instance.gold).ToString();
-            statsText[(int)StatListIndex.Hp].text = (int)InvManager.Instance.hp + "/" + (int)InvManager.Instance.maxHp;
-            statsText[(int)StatListIndex.Atk].text = InvManager.Instance.attackPower.ToString("F2");
-            statsText[(int)StatListIndex.Def].text = InvManager.Instance.defense.ToString("F2");
-            statsText[(int)StatListIndex.Spd].text = InvManager.Instance.speed.ToString("F2");
-            statsText[(int)StatListIndex.Wgt].text = InvManager.Instance.airBonePower.ToString("F2");
-            statsText[(int)StatListIndex.Luk].text = InvManager.Instance.luck.ToString("F2");
-            statsText[(int)StatListIndex.Jmp].text = InvManager.Instance.jumpPower.ToString("F2");
-            statsText[(int)StatListIndex.Orb].text = InvManager.Instance.orb.ToString("F2");
-            statsText[(int)StatListIndex.Brk].text = InvManager.Instance.stansBreak.ToString("F2");
+            statsText[(int)StatListIndex.Gold].text = ((int)InvManager.instance.gold).ToString();
+            statsText[(int)StatListIndex.Hp].text = (int)InvManager.instance.hp + "/" + (int)InvManager.instance.maxHp;
+            statsText[(int)StatListIndex.Atk].text = InvManager.instance.GetAttackPower().ToString("F2");
+            statsText[(int)StatListIndex.Def].text = InvManager.instance.GetDefense().ToString("F2");
+            statsText[(int)StatListIndex.Spd].text = InvManager.instance.speed.ToString("F2");
+            statsText[(int)StatListIndex.Wgt].text = InvManager.instance.airBonePower.ToString("F2");
+            statsText[(int)StatListIndex.Luk].text = InvManager.instance.luck.ToString("F2");
+            statsText[(int)StatListIndex.Jmp].text = InvManager.instance.jumpPower.ToString("F2");
+            statsText[(int)StatListIndex.Orb].text = InvManager.instance.orb.ToString("F2");
+            statsText[(int)StatListIndex.Brk].text = InvManager.instance.stansBreak.ToString("F2");
         }
     }
 }

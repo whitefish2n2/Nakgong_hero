@@ -22,8 +22,8 @@ namespace Source.UiCode
         }
         public void UpdateHpBar()
         {
-            _hpBarImage.fillAmount = InvManager.Instance.hp / InvManager.Instance.maxHp;
-            _hpTextTmp.text = InvManager.Instance.hp + "/" + InvManager.Instance.maxHp;
+            _hpBarImage.fillAmount = InvManager.instance.hp / InvManager.instance.maxHp;
+            _hpTextTmp.text = InvManager.instance.hp + "/" + InvManager.instance.maxHp;
         }
     }
 }

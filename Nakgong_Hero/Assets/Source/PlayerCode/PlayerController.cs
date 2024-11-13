@@ -107,14 +107,14 @@ namespace Source.PlayerCode
 
                 if (Input.GetKey(KeyCode.LeftShift) && !_isReadyNakgong)
                 {
-                    InvManager.Instance.speed = InvManager.Instance.startSpeed + InvManager.Instance.shiftSpeedPlus;
+                    InvManager.instance.speed = InvManager.instance.startSpeed + InvManager.instance.shiftSpeedPlus;
                     _anim.SetFloat(MoveSpeed, 2f);
                 }
                 else
                 {
                     if (!_isReadyNakgong)
                     {
-                        InvManager.Instance.speed = InvManager.Instance.startSpeed;
+                        InvManager.instance.speed = InvManager.instance.startSpeed;
                         _anim.SetFloat(MoveSpeed, 1f);
                     }
                 }
@@ -254,7 +254,7 @@ namespace Source.PlayerCode
         {
             playerPos = gameObject.transform.position;
             playerRotate = gameObject.transform.rotation;
-            _rigid.linearVelocity = new Vector2(_horizontal * InvManager.Instance.speed * Time.deltaTime, _rigid.linearVelocity.y);
+            _rigid.linearVelocity = new Vector2(_horizontal * InvManager.instance.speed * Time.deltaTime, _rigid.linearVelocity.y);
 
             //debug section
         }
@@ -314,7 +314,7 @@ namespace Source.PlayerCode
                 _isNakGonging = true;
                 ChangeNakgongCam();
                 //낙공 속도
-                _rigid.gravityScale = InvManager.Instance.startGravityScale + InvManager.Instance.gravityScalePlus;
+                _rigid.gravityScale = InvManager.instance.startGravityScale + InvManager.instance.gravityScalePlus;
                 StartCoroutine(GroundedChecker());
             }
             _isReadyNakgong = false;
@@ -358,19 +358,19 @@ namespace Source.PlayerCode
             foreach(var o in rayL)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stansBreak, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
             }
             foreach(var o in rayR)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.Instance.attackPower*1.1f, InvManager.Instance.stansBreak, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
             }
         }
 
         //공격받았을때
         public static void GotAttack(float damage, float stunTime)
         {
-            InvManager.Instance.hp -= damage;
+            InvManager.instance.hp -= damage;
             HpUiManager.instance.UpdateHpBar();
         }
 
@@ -399,7 +399,7 @@ namespace Source.PlayerCode
             if (_goNakgong)
             {
                 _isReadyNakgong = true;
-                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower/2);
+                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower/2);
                 _deager.InstanceTurnBack();
                 NakGong();
                 isGetHooking = false;
@@ -415,7 +415,7 @@ namespace Source.PlayerCode
         IEnumerator Jump()
         {
             _isJumping = true;
-            _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower);
+            _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
             yield return new WaitForSeconds(0.1f);
           
             while (!_onGround)
@@ -424,7 +424,7 @@ namespace Source.PlayerCode
                 {
                     _isReadyNakgong = true;
                     _isJumping = false;
-                    _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.Instance.jumpPower);
+                    _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
                     StartCoroutine(GroundedChecker());
                     throwOnAirCount = _throwOnAirCountTemp;
                     yield break;
@@ -442,9 +442,9 @@ namespace Source.PlayerCode
             yield return new WaitForSeconds(0.04f);
             while (!_onGround)
             {
-                if (_isReadyNakgong && InvManager.Instance.speed > 0f)
+                if (_isReadyNakgong && InvManager.instance.speed > 0f)
                 {
-                    InvManager.Instance.speed -= 300f * Time.deltaTime;
+                    InvManager.instance.speed -= 300f * Time.deltaTime;
                 }
 
                 if (_isNakGonging)
@@ -452,7 +452,7 @@ namespace Source.PlayerCode
                 
                     if (attackMode == "Default")
                     {
-                        InvManager.Instance.airBonePower += 300f * Time.deltaTime;
+                        InvManager.instance.airBonePower += 300f * Time.deltaTime;
                     }
                 }
                 yield return null;
@@ -460,7 +460,7 @@ namespace Source.PlayerCode
             if (_isReadyNakgong)
             {
                 _isReadyNakgong = false;
-                InvManager.Instance.speed = InvManager.Instance.startSpeed;
+                InvManager.instance.speed = InvManager.instance.startSpeed;
             }
             if (_isNakGonging)
             {
@@ -469,12 +469,12 @@ namespace Source.PlayerCode
                 StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
                 if (attackMode == "Default")
                 {
-                    InvManager.Instance.airBonePower = 0f;
+                    InvManager.instance.airBonePower = 0f;
                     attackBox.SetActive(false);
                 }
             }
             CameraDefaultMove.CameraposPlus = 0f;
-            _rigid.gravityScale = InvManager.Instance.startGravityScale;
+            _rigid.gravityScale = InvManager.instance.startGravityScale;
         }
 
         private IEnumerator MainCameraShakeDiscourage(float start, float end, float time)

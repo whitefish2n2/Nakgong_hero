@@ -678,6 +678,7 @@ RectTransform:
   - {fileID: 7746522025632807955}
   - {fileID: 1946123994316758611}
   - {fileID: 4096438832147367980}
+  - {fileID: 7652754016650103970}
   m_Father: {fileID: 5524981450602793223}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2724,7 +2725,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3790648244858834574}
-  - {fileID: 7652754016650103970}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2812,11 +2812,19 @@ MonoBehaviour:
   maxInOneRow: 3
   uiSpeed: 0
   invItemPrefab: {fileID: 0}
+  itemDescriptionPanel: {fileID: 0}
+  itemDescriptionPanelRect: {fileID: 0}
+  itemDescriptionBody: {fileID: 0}
+  itemDescriptionName: {fileID: 0}
+  descriptionItemIcon: {fileID: 0}
+  descriptionPanelAnimator: {fileID: 0}
   itemPanel: {fileID: 1426269379697200856}
+  itemNamePanel: {fileID: 0}
   itemsList:
   - {fileID: 0}
   uiPanel: {fileID: 1610304002526272088}
   panelAnimator: {fileID: 6581494427507729981}
+  panelRect: {fileID: 0}
   statsText:
   - {fileID: 7426877674422679503}
   - {fileID: 5774951192901913107}
@@ -2828,6 +2836,7 @@ MonoBehaviour:
   - {fileID: 310848483978867822}
   - {fileID: 5629146065220540491}
   - {fileID: 2830629386765231036}
+  currentHoverItem: {fileID: 0}
 --- !u!1 &8306478590920633234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3292,8 +3301,16 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 5524981450602793223}
+    m_TransformParent: {fileID: 3790648244858834574}
     m_Modifications:
+    - target: {fileID: 995604371533938341, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1.9998779
+      objectReference: {fileID: 0}
+    - target: {fileID: 4046448510982851861, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_Pivot.x
       value: -0.009089992
@@ -3320,11 +3337,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -1441.2151
+      value: -924.2495
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -475.096
+      value: -293.8913
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3356,11 +3373,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 659.70807
+      value: 397.04608
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 15.042786
+      value: 18.61914
       objectReference: {fileID: 0}
     - target: {fileID: 5305440615699541799, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3378,6 +3395,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InvItemDescript
       objectReference: {fileID: 0}
+    - target: {fileID: 7073422510382658613, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 24.099976
+      objectReference: {fileID: 0}
     - target: {fileID: 7497748364213602840, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -3389,6 +3410,14 @@ PrefabInstance:
     - target: {fileID: 7497748364213602840, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
       propertyPath: m_Color.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7990580212132122651, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188800704869686137, guid: f21946f2c5498474d8eca51faee2e3d7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1.7900391
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
