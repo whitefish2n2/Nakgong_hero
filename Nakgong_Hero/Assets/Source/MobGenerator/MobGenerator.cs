@@ -12,7 +12,7 @@ public class MobGenerator : MonoBehaviour
     {
         for (int i = 0; i < GenList.Length; i++)
         {
-            GameObject Instance = Instantiate(GenList[i], (Vector2)transform.position + GenPos[i], Quaternion.identity);
+            GameObject instance = Instantiate(GenList[i], (Vector2)transform.position + GenPos[i], Quaternion.identity); 
         }
     }
 }

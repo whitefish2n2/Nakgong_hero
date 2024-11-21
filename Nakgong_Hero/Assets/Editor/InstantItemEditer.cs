@@ -45,6 +45,7 @@ namespace Editor
                     });
                     commonItem.prefab =
                         (GameObject)EditorGUILayout.ObjectField("Prefab", commonItem.prefab, typeof(GameObject), false);
+                    commonItem.isDestroyItem = EditorGUILayout.Toggle("Is DestroyItem", commonItem.isDestroyItem);
                     EditorGUILayout.Space(14);
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();

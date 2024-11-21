@@ -12,7 +12,7 @@ public class GroundDeagerCheck : MonoBehaviour
     {
         if (other.CompareTag("Deager") && !dontCheck)
         {
-            if (PlayerController.Instance.isThrowing && !PlayerController.Instance.isGetHooking)
+            if (PlayerController.instance.isThrowing && !PlayerController.instance.isGetHooking)
             {
                 global::Source.PlayerCode.Deager.isCrashWithWall = true;
             }

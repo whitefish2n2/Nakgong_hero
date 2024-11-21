@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3536648d3cce45343982c18f8d906f2e, type: 3}
+  m_Name: LeverData
+  m_EditorClassIdentifier: 
+  beforeActive: {fileID: -566018274198173244, guid: bbfc98c378006044985224247ec81b85, type: 3}
+  afterActive: {fileID: 2903448598463509799, guid: aba497b5ba04d0a4796c12a7e9cc7024, type: 3}

@@ -2,24 +2,26 @@ using System;
 using System.Collections;
 using Cinemachine;
 using Source.Item;
+using Source.Item.ItemInteract;
 using Source.MonsterCode;
 using Source.UiCode;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Source.PlayerCode
 {
     public class PlayerController : MonoBehaviour
     {
-        public static PlayerController Instance;
+        public static PlayerController instance;
         private Rigidbody2D _rigid;
         private Animator _anim;
         [SerializeField] private GameObject attackBox;
 
-        [FormerlySerializedAs("Sword")] [Header("대검 투척")] [SerializeField]
-        private GameObject sword;
+        [Header("대검 투척/들고있는 대검")] 
+        [SerializeField] private GameObject sword;
+        [SerializeField] private TrailRenderer trail;
+        [SerializeField] private GameObject holdingSword;
 
         private Deager _deager;
 
@@ -49,15 +51,13 @@ namespace Source.PlayerCode
         //점프 중/ 낙공 중 판별 bool
         private bool _isNakGonging;
         private bool _isJumping;
-        private bool _isReadyNakgong;
-        [HideInInspector] public bool isThrowing;
-        [HideInInspector] public bool isGetHooking;
+        [SerializeField] private bool _isReadyNakgong;
+        public bool isThrowing;
+        public bool isGetHooking;
         [HideInInspector] public string attackMode;
         [HideInInspector] public Vector3 playerPos;
         [HideInInspector] public Quaternion playerRotate;
-        private bool _goingRight;
-        private bool _sHold;
-        private bool _onGround;
+        
     
         //좌클릭으로 훅 진입함?
         private bool _goNakgong;
@@ -66,14 +66,28 @@ namespace Source.PlayerCode
         [Header("상태관리")]
         public bool isStop;
         public bool doNotAttack;
+        public bool isStun;
+        [SerializeField] private bool goingRight;
+        [SerializeField] private bool sHold;
+        [SerializeField] private bool onGround;
 
         //이전 프레임에 보고 있는 ITEM OBJECT
         private Collider2D _watchingItemTemp;
+        
+        //animation cashing
+        //bool
         private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+        private static readonly int LeftMoving = Animator.StringToHash("LeftMoving");
+        private static readonly int RightMoving = Animator.StringToHash("RightMoving");
+        //trigger
+        private static readonly int Nakgong = Animator.StringToHash("Nakgong");
+        private static readonly int NakgongEnd = Animator.StringToHash("NakgongEnd");
+        private static readonly int IsHoldingDeager = Animator.StringToHash("is Holding Deager");
+        private static readonly int HoldRefresh = Animator.StringToHash("HoldRefresh");
 
         private void Awake()
         {
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(cinemachineBrain);
             DontDestroyOnLoad(vCam);
@@ -93,110 +107,111 @@ namespace Source.PlayerCode
             attackBox.SetActive(false);
             _playerCollider = GetComponent<PlayerCollider>();
             HpUiManager.instance.UpdateHpBar();
+            ChangeDeagerMode(SwordMode.Hold);
         }
 
         private void Update()
         {
-            _onGround = PlayerCollider.IsOnGround;
+            onGround = PlayerCollider.IsOnGround;
             if (!isStop)
             {
-                if (Input.GetKeyDown(KeyCode.Space) && _onGround)
+                if (Input.GetKeyDown(KeyCode.Space) && onGround)
                 {
                     StartCoroutine(Jump());
                 }
 
-                if (Input.GetKey(KeyCode.LeftShift) && !_isReadyNakgong)
+                if (!isStun)
                 {
-                    InvManager.instance.speed = InvManager.instance.startSpeed + InvManager.instance.shiftSpeedPlus;
-                    _anim.SetFloat(MoveSpeed, 2f);
-                }
-                else
-                {
-                    if (!_isReadyNakgong)
+                    if (Input.GetKey(KeyCode.LeftShift) && !_isReadyNakgong)
                     {
-                        InvManager.instance.speed = InvManager.instance.startSpeed;
-                        _anim.SetFloat(MoveSpeed, 1f);
+                        InvManager.instance.speed = InvManager.instance.startSpeed + InvManager.instance.shiftSpeedPlus;
+                        _anim.SetFloat(MoveSpeed, 2f);
                     }
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftShift) && !_isReadyNakgong)
-                {
-                    if (true)
+                    else
                     {
-                        _rigid.AddForce((_goingRight ? Vector3.right : Vector3.left));
-                    }
-                }
-
-                if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
-                {
-                    GoLeft();
-                }
-
-                if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
-                {
-                    GoRight();
-                }
-
-                if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
-                {
-                    _horizontal = 0f;
-                }
-                if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
-                {
-                    _horizontal = 0f;
-                }
-                if (Input.GetKey(KeyCode.S) && _horizontal == 0f && _onGround)
-                {
-                    _sHold = true;
-                }
-                else
-                {
-                    _sHold = false;
-                }
-                if (!doNotAttack)
-                {
-                    //좌클릭-낙공 우클릭-던지기
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        if (_isReadyNakgong)
+                        if (!_isReadyNakgong)
                         {
-                            NakGong();
-                        }
-                        else if (!_isNakGonging && !isGetHooking && isThrowing)
-                        {
-                            isGetHooking = true;
-                            _goNakgong = true;
-                            GetHooking();
-                        }
-                        else if (_sHold)
-                        {
-                            EarthCrushing();
+                            InvManager.instance.speed = InvManager.instance.startSpeed;
+                            _anim.SetFloat(MoveSpeed, 1f);
                         }
                     }
 
-                    if (Input.GetMouseButtonDown(1))
+                    if (Input.GetKeyDown(KeyCode.LeftShift) && !_isReadyNakgong)
                     {
-                        if (!_isNakGonging && !isThrowing && !_isReadyNakgong)
+                        if (true)
                         {
-                            Throwing();
+                            _rigid.AddForce((goingRight ? Vector3.right : Vector3.left));
                         }
-                        else if (isThrowing && !isGetHooking)
+                    }
+
+                    if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+                    {
+                        GoLeft();
+                    }
+
+                    if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+                    {
+                        GoRight();
+                    }
+
+                    if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+                    {
+                        _horizontal = 0f;
+                    }
+                    if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
+                    {
+                        _horizontal = 0f;
+                    }
+                    if (Input.GetKey(KeyCode.S) && _horizontal == 0f && onGround)
+                    {
+                        sHold = true;
+                    }
+                    else
+                    {
+                        sHold = false;
+                    }
+                    if (!doNotAttack)
+                    {
+                        //좌클릭-낙공 우클릭-던지기
+                        if (Input.GetMouseButtonDown(0))
                         {
-                            isGetHooking = true;
-                            GetHooking();
+                            if (_isReadyNakgong)
+                            {
+                                NakGong();
+                            }
+                            else if (!_isNakGonging && !isGetHooking && isThrowing && !onGround)
+                            {
+                                isGetHooking = true;
+                                _goNakgong = true;
+                                GetHooking();
+                            }
+                            else if (sHold)
+                            {
+                                EarthCrushing();
+                            }
+                        }
+
+                        if (Input.GetMouseButtonDown(1))
+                        {
+                            if (!_isNakGonging && !isThrowing && !isGetHooking && !_isReadyNakgong)
+                            {
+                                Throwing();
+                            }
+                            else if (isThrowing && !isGetHooking && !onGround)
+                            {
+                                isGetHooking = true;
+                                GetHooking();
+                            }
                         }
                     }
                 }
             }
-            if (_isReadyNakgong ||  _horizontal == 0)
+            if (_horizontal == 0)
             {
-                if (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Default"))
-                {
-                    _anim.StopPlayback();
-                    _anim.Play("Default");
-                }
+                _anim.SetBool(RightMoving, false);
+                _anim.SetBool(LeftMoving, false);
             }
-            if (_onGround && movingFloor)
+            if (onGround && movingFloor)
             {
                 if (_mfDist == new Vector2(12123, 12123) || _horizontalTemp != 0 || _isJumping)
                 {
@@ -207,18 +222,17 @@ namespace Source.PlayerCode
                 }
                 else
                     transform.position = (Vector2)movingFloor.transform.position + _mfDist;
-                    
             }
             else
             {
                 _mfDist = new Vector2(12123, 12123);
             }
             _horizontalTemp = _horizontal;
-            if (_onGround)
+            if (onGround)
                 throwOnAirCount = _throwOnAirCountTemp;
             //아이템 인터렉트 코드
             RaycastHit2D interactRay = Physics2D.Raycast(new Vector2(playerPos.x, playerPos.y - 1f),
-                (_goingRight ? Vector3.right:Vector3.left), 2, LayerMask.GetMask("Items", "MovingObjects"));
+                (goingRight ? Vector3.right:Vector3.left), 2, LayerMask.GetMask("Items", "MovingObjects"));
             
             if (interactRay.collider?.gameObject.CompareTag("CommonItem") ?? false)
             {
@@ -282,26 +296,22 @@ namespace Source.PlayerCode
         private void GoRight()
         {
             _horizontal = 1f;
-            gameObject.transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
-            _goingRight = true;
-            if (_isReadyNakgong) return;
-            if (_anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
-            {
-                _anim.Play("LeftMove");
-            }
+            goingRight = true;
+            if (_isReadyNakgong || _isNakGonging) return;
+            gameObject.transform.rotation = Quaternion.Euler(0f, -180f, 0f);
+            _anim.SetBool(RightMoving, true);
+            _anim.SetBool(LeftMoving, false);
         }
 
         //왼쪽으로 이동 애니메이션 관리
         private void GoLeft()
         {
             _horizontal = -1f;
-            gameObject.transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
-            _goingRight = false;
-            if(_isReadyNakgong) return;
-            if (_anim.GetCurrentAnimatorStateInfo(0).IsName("LeftMove") == false)
-            {
-                _anim.Play("LeftMove");
-            }
+            goingRight = false;
+            if(_isReadyNakgong || _isNakGonging) return;
+            gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            _anim.SetBool(RightMoving, false);
+            _anim.SetBool(LeftMoving, true);
         }
 
         //낙하공격 고고
@@ -313,9 +323,10 @@ namespace Source.PlayerCode
                 attackBox.SetActive(true);
                 _isNakGonging = true;
                 ChangeNakgongCam();
+                _anim.SetTrigger(Nakgong);
                 //낙공 속도
                 _rigid.gravityScale = InvManager.instance.startGravityScale + InvManager.instance.gravityScalePlus;
-                StartCoroutine(GroundedChecker());
+                StartCoroutine(NakgongManage());
             }
             _isReadyNakgong = false;
         }
@@ -323,6 +334,10 @@ namespace Source.PlayerCode
         //대검 던지기
         private void Throwing()
         {
+            RefreshHoldDeager(false);
+            sword.transform.position = holdingSword.transform.position;
+            sword.transform.rotation = holdingSword.transform.rotation;
+            ChangeDeagerMode(SwordMode.Throw);
             if (throwOnAirCount > 0)
             {
                 sword.GetComponent<SpriteRenderer>().color = Color.white;
@@ -358,34 +373,34 @@ namespace Source.PlayerCode
             foreach(var o in rayL)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAirbornAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
             }
             foreach(var o in rayR)
             {
                 if(o.transform.CompareTag("DefaultMonster"))
-                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
+                    o.collider.gameObject.GetComponent<DefaultMonster>().GotAirbornAttack("대지분쇄", InvManager.instance.GetAttackPower()*1.1f, InvManager.instance.stansBreak, 500);
             }
         }
 
         //공격받았을때
-        public static void GotAttack(float damage, float stunTime)
+        public static void GotAttack(float damage, float stunTime = 0)
         {
             InvManager.instance.hp -= damage;
             HpUiManager.instance.UpdateHpBar();
         }
 
         //대검쪽으로 이동 코루틴
-        IEnumerator GetHook()
+        private IEnumerator GetHook()
         {
-            Vector3 startPos = playerPos;
-            Vector3 getHere = sword.transform.position;
-            float elapsedTime = 0f;
             float gravityTemp = _rigid.gravityScale;
+            _rigid.linearVelocity = Vector2.zero;
             _rigid.gravityScale = 0f;
-            while (elapsedTime < getHookSpeed && isGetHooking)
+            isStun = true;
+            isThrowing = false;
+            _horizontal = 0f;
+            while (isGetHooking && Vector2.Distance(sword.transform.position,transform.position) > 0.9f)
             {
-                gameObject.transform.position = Vector3.Lerp(startPos, getHere, elapsedTime / getHookSpeed);
-                elapsedTime += Time.deltaTime;
+                transform.position += (sword.transform.position - playerPos).normalized * (Time.deltaTime * getHookSpeed);
                 if (_playerCollider.IsColliding)
                 {
                     isGetHooking = false;
@@ -394,7 +409,8 @@ namespace Source.PlayerCode
                 }
                 yield return null;
             }
-        
+            isGetHooking = false;
+            isStun = false;
             _rigid.gravityScale = gravityTemp;
             if (_goNakgong)
             {
@@ -406,26 +422,29 @@ namespace Source.PlayerCode
                 _goNakgong = false;
                 yield break;
             }
-            _deager.StartCoroutine("TurnBack");
+            if(Vector2.Distance(sword.transform.position,transform.position) > 0.9f)
+                _deager.InstanceTurnBack();
+            else if(_deager.isActiveAndEnabled)
+                _deager.StartCoroutine("TurnBack");
             isGetHooking = false;
             _goNakgong = false;
         }
 
         //점프(2단점프 포함)
-        IEnumerator Jump()
+        private IEnumerator Jump()
         {
             _isJumping = true;
             _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
             yield return new WaitForSeconds(0.1f);
           
-            while (!_onGround)
+            while (!onGround)
             {
-                if (Input.GetKeyDown(KeyCode.Space) && !isThrowing && !doNotAttack)
+                if (Input.GetKeyDown(KeyCode.Space) && !isThrowing && !isGetHooking && !doNotAttack)
                 {
                     _isReadyNakgong = true;
                     _isJumping = false;
                     _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
-                    StartCoroutine(GroundedChecker());
+                    StartCoroutine(NakgongManage());
                     throwOnAirCount = _throwOnAirCountTemp;
                     yield break;
                 }
@@ -436,11 +455,11 @@ namespace Source.PlayerCode
             throwOnAirCount = _throwOnAirCountTemp;
         }
         //낙공할 때 바닥에 닿을 때까지 속도가 느려지고 낙공 가중치 만드는 청년(낙공 판정 서포터)
-        private IEnumerator GroundedChecker()
+        private IEnumerator NakgongManage()
         {
             //bool tempforbug = _playerCollider.isOnGround;
             yield return new WaitForSeconds(0.04f);
-            while (!_onGround)
+            while (!onGround)
             {
                 if (_isReadyNakgong && InvManager.instance.speed > 0f)
                 {
@@ -467,6 +486,9 @@ namespace Source.PlayerCode
                 _isNakGonging = false;
                 ChangeNakgongCam();
                 StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
+                _anim.SetTrigger(NakgongEnd);
+                _horizontal = 0;
+                StartCoroutine(CoolBool(0.5f, v => isStun = v, false));
                 if (attackMode == "Default")
                 {
                     InvManager.instance.airBonePower = 0f;
@@ -489,16 +511,89 @@ namespace Source.PlayerCode
             _noise.m_AmplitudeGain = end;
         }
 
-        private IEnumerator CoolBool(float t, Action<bool> target)
+        private IEnumerator CoolBool(float t, Action<bool> target, bool to = true)
         {
-            target(false);
+            target(!to);
             yield return new WaitForSeconds(t);
-            target(true);
+            target(to);
         }
 
         private void ChangeNakgongCam()
         {
             vNakgongCam.Priority = _isNakGonging ? 11 : 9;
+        }
+
+        private void RefreshHoldDeager(bool hold)
+        {
+            _anim.SetBool(IsHoldingDeager,hold);
+            _anim.SetTrigger(HoldRefresh);
+        }
+
+        public void ChangeDeagerMode(SwordMode mode)
+        {
+            switch (mode)
+            {
+                case SwordMode.Hold:
+                    holdingSword.SetActive(true);
+                    sword.SetActive(false);
+                    break;
+                case SwordMode.Throw:
+                    holdingSword.SetActive(false);
+                    sword.SetActive(true);
+                    break;
+            }
+        }
+        public void SetNormal()
+        {
+            StopCoroutine(nameof(NakgongManage));
+            StopCoroutine(nameof(Jump));
+            _deager.InstanceTurnBack();
+            _isNakGonging = false;
+            isThrowing = false;
+            isGetHooking = false;
+            _goNakgong = false;
+            _anim.StopPlayback();
+            _anim.SetTrigger(NakgongEnd);
+            ChangeNakgongCam();
+            _rigid.gravityScale = 1f;
+        }
+
+        public void InstantBreakMove()
+        {
+            _horizontal = 0f;
+            _rigid.linearVelocity = Vector2.zero;
+        }
+
+        private IEnumerator currentXBreak;
+        public void X_BreakTil(float t)
+        {
+            StartCoroutine(XBreakTil(t));
+        }
+
+        public void StopXBreak()
+        {
+            StopCoroutine(currentXBreak);
+            isStun = false;
+        }
+        private IEnumerator XBreakTil(float t)
+        {
+            float elapsedTime = 0;
+            isStun = true;
+            while (elapsedTime < t)
+            {
+                _horizontal = 0f;
+                elapsedTime += Time.deltaTime;
+                _rigid.linearVelocity = new Vector2(0, _rigid.linearVelocity.y);
+                yield return null;
+            }
+
+            isStun = false;
+        }
+
+        public enum SwordMode
+        {
+            Throw,
+            Hold
         }
     }
 }

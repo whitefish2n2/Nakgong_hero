@@ -1,15 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using Source.Item;
 using Source.PlayerCode;
 using TMPro;
 using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Source.UiCode
@@ -95,15 +90,17 @@ namespace Source.UiCode
             var o = Instantiate(invItemPrefab, itemPanel.GetComponent<RectTransform>(), true);
             itemsList.Add(o);
             var oItem = o.GetComponent<ItemInInventory>();
+            var oImage = o.GetComponent<Image>();
             oItem.Init(item);
-            o.GetComponent<RectTransform>().localPosition = new Vector2(
-                itemsList.Count % maxInOneRow * colInterval + 100, itemsList.Count / maxInOneRow * -rowInterval - 100);
+            o.GetComponent<RectTransform>().parent = itemPanel.GetComponent<RectTransform>();
+            oImage.sprite = item.invIcon;
         }
 
         public void RemoveItem(ItemInInventory item)
         {
             itemsList.Remove(item.gameObject);
             item.Remove();
+            Destroy(item.gameObject);
             UpdateItems();
         }
 
@@ -126,21 +123,21 @@ namespace Source.UiCode
             while (true)
             {
                 itemDescriptionPanelRect.position = Input.mousePosition;
-                itemDescriptionPanelRect.anchoredPosition = new Vector2(math.clamp(itemDescriptionPanelRect.anchoredPosition.x,-250,1200), math.clamp(itemDescriptionPanelRect.anchoredPosition.y,-240,240));
+                itemDescriptionPanelRect.localPosition = new Vector2(math.clamp(itemDescriptionPanelRect.localPosition.x,-960,580), math.clamp(itemDescriptionPanelRect.localPosition.y,-240,260));
                 yield return null;
             }
             // ReSharper disable once IteratorNeverReturns
         }
         private IEnumerator UI_On()
         {
-            if (PlayerController.Instance.isStop) yield break;
+            if (PlayerController.instance.isStop) yield break;
             Time.timeScale = 0f;
-            PlayerController.Instance.Stop();
+            PlayerController.instance.Stop();
             uiPanel.SetActive(true);
             _isUiOn = true;
             while (panelRect.localPosition.y < 0)
             {
-                panelRect.localPosition += Vector3.up * (Time.unscaledDeltaTime * uiSpeed);
+                panelRect.position += Vector3.up * (Time.unscaledDeltaTime * uiSpeed);
                 yield return null;
             }
             panelRect.localPosition = new Vector3(0,0,0);
@@ -149,13 +146,13 @@ namespace Source.UiCode
         private IEnumerator UI_Down()
         {
             Time.timeScale = 1f;
-            PlayerController.Instance.DisStop();
+            PlayerController.instance.DisStop();
             panelAnimator.Play("Umzzil");
             _isUiOn = false;
             yield return new WaitForSecondsRealtime(0.1f);
             while (uiPanel.transform.localPosition.y > -1500)
             {
-                panelRect.localPosition -= Vector3.up * (Time.unscaledDeltaTime * uiSpeed);
+                panelRect.position -= Vector3.up * (Time.unscaledDeltaTime * uiSpeed);
                 yield return null;
             }
             panelRect.localPosition = new Vector3(0,-1500,0);

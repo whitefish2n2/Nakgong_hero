@@ -22,7 +22,7 @@ public class Chain : MonoBehaviour
         if (mode == 1)
         {
             gameObject.transform.position =
-                new Vector3(PlayerController.Instance.playerPos.x-0.099f, PlayerController.Instance.playerPos.y - 0.809f); 
+                new Vector3(PlayerController.instance.playerPos.x-0.099f, PlayerController.instance.playerPos.y - 0.809f); 
         }
     }
 }

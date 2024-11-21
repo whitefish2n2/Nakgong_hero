@@ -13,6 +13,7 @@ namespace Source.Item
         public string ItemName;
         public GameObject prefab;
         public Sprite InvSprite;
+        public Sprite invIcon;
         [TextArea] public string Discription;
         public string interactionDescription = "획득";
         public UnityEvent <CommonItem> OnGet;

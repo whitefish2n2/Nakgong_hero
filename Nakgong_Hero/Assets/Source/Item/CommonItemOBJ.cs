@@ -1,48 +1,46 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Source.Item;
 using Source.PlayerCode;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class CommonItemOBJ : MonoBehaviour
+namespace Source.Item
 {
-    public CommonItem itemInfo;
-    [SerializeField] bool interactOnUser;
-    private bool dontcheck = true;
-    public void Watching()
+    public class CommonItemOBJ : MonoBehaviour
     {
-        dontcheck = false;
-        StartCoroutine(WatchChecker());
-    }
-
-    public void DisWatching()
-    {
-        dontcheck = true;
-        ItemInteract.Instance.InteractOut();
-        StopCoroutine(WatchChecker());
-    }
-
-    public void Get()
-    {
-        itemInfo.Get();
-        DisWatching();
-        if(itemInfo.isDestroyItem)
-            Destroy(gameObject);
-    }
-
-    IEnumerator WatchChecker()
-    {
-        while (!dontcheck)
+        public CommonItem itemInfo;
+        public bool interactOnUser;
+        [HideInInspector]public bool dontCheck = true;
+        public void Watching()
         {
-            ItemInteract.Instance.InteractOnHere(interactOnUser
-                ? new Vector2(PlayerController.Instance.playerPos.x - 0.4f, PlayerController.Instance.playerPos.y + 1f)
-                : new Vector2(transform.position.x, transform.position.y + 1f));
-            yield return null;
+            dontCheck = false;
+            StartCoroutine(WatchChecker());
         }
-        DisWatching();
+
+        public void DisWatching()
+        {
+            dontCheck = true;
+            ItemInteract.ItemInteract.Instance.InteractOut();
+            StopCoroutine(WatchChecker());
+        }
+
+        public virtual void Get()
+        {
+            itemInfo.Get();
+            DisWatching();
+            if(itemInfo.isDestroyItem)
+                Destroy(gameObject);
+        }
+
+        IEnumerator WatchChecker()
+        {
+            while (!dontCheck)
+            {
+                ItemInteract.ItemInteract.Instance.InteractOnHere(interactOnUser
+                    ? new Vector2(PlayerController.instance.playerPos.x - 0.4f, PlayerController.instance.playerPos.y + 1f)
+                    : new Vector2(transform.position.x, transform.position.y + 1f));
+                yield return null;
+            }
+            DisWatching();
+        }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Source;
 using Source.GameManager;
 using Source.PlayerCode;
 using UnityEngine;
@@ -10,12 +11,13 @@ public class StartSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject baseObject;
     [SerializeField] private GameObject[] titles;
-    public void pressAnyButton()
+    [SerializeField] private GameObject wallForClose;
+    public void PressAnyButton()
     {
         if (Input.GetKey(KeyCode.D))
         {
-            PlayerController.Instance.DisStop();
-            LoadStartScene();
+            PlayerController.instance.DisStop();
+            LoadStartScene(0);
             return;
         }
         baseObject.GetComponent<PlayableDirector>().Play();
@@ -25,10 +27,15 @@ public class StartSceneManager : MonoBehaviour
         }
     }
 
-    public void LoadStartScene()
+    public void LoadStartScene(float d = 2)
     {
-        PlayerController.Instance.BeAttackAble();
-        SceneLoader.Instance.LoadScene("Stage1",2,new Vector2(-14f,126f));
+        PlayerController.instance.BeAttackAble();
+        SceneLoader.Instance.LoadScene("Stage1",d,new Vector2(-14f,126f), refreshPlayerStates:true);
+    }
+
+    public void StartAction()
+    {
+        wallForClose.SetActive(true);
     }
     
 }

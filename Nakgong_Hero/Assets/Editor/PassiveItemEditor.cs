@@ -46,8 +46,11 @@ namespace Editor
                     });
                     commonItem.InvSprite =
                         (Sprite)EditorGUILayout.ObjectField("InvSprite", commonItem.InvSprite, typeof(Sprite), false);
+                    commonItem.invIcon =
+                        (Sprite)EditorGUILayout.ObjectField("InvIcon", commonItem.invIcon, typeof(Sprite), false);
                     commonItem.prefab =
                         (GameObject)EditorGUILayout.ObjectField("Prefab", commonItem.prefab, typeof(GameObject), false);
+                    commonItem.isDestroyItem = EditorGUILayout.Toggle("Is DestroyItem", commonItem.isDestroyItem);
                     EditorGUILayout.Space(14);
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();

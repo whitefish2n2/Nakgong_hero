@@ -37,10 +37,12 @@ namespace Source.GameManager
             _fadeRenderer.gameObject.SetActive(false);
         }
 
-        public void LoadScene(string sceneName, float delay = 0, Vector2 newPlayerPos = default, float startFade = 0.5f, float endFade = 0.5f)
+        public void LoadScene(string sceneName, float delay = 0, Vector2 newPlayerPos = default, bool refreshPlayerStates = false, float startFade = 0.5f, float endFade = 0.5f)
         {
             if (_isLoading) return;
             _isLoading = true;
+            if(refreshPlayerStates)
+                PlayerController.instance.SetNormal();
             StartCoroutine(LoadSceneIE(sceneName, newPlayerPos, delay, startFade, endFade));
         }
 
@@ -51,47 +53,48 @@ namespace Source.GameManager
             else throw new Exception("Scene not found");
             //fade in
             loadFade.SetActive(true);
+            Time.timeScale = 0;
             float elapsedTime = 0;
             while (elapsedTime < startFade)
             {
-                elapsedTime += Time.deltaTime;
+                elapsedTime += Time.unscaledDeltaTime;
                 var fade = elapsedTime / startFade;
                 _fadeRenderer.SetAlpha(fade);
                 _loadAnimRenderer.SetAlpha(fade);
                 _barRenderer.SetAlpha(fade);
                 yield return null;
             }
-            PlayerController.Instance.Stop();
+            PlayerController.instance.Stop();
             //씬 이동
             while (asyncOperation.progress <= 0.41f)
             {
                 _loadBarImage.fillAmount = asyncOperation.progress;
                 yield return null;
             }
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             while (asyncOperation.progress < 0.9f)
             {
                 _loadBarImage.fillAmount = asyncOperation.progress;
                 yield return null;
             }
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             asyncOperation.allowSceneActivation = true;
             _loadBarImage.fillAmount = 1;
-            yield return new WaitForSeconds(delay);
-            PlayerController.Instance.gameObject.transform.position = newPlayerPos;
+            yield return new WaitForSecondsRealtime(delay);
+            PlayerController.instance.gameObject.transform.position = newPlayerPos;
             //fade out
             elapsedTime = 0;
-            Debug.Log(elapsedTime<endFade);
-            PlayerController.Instance.DisStop();
+            PlayerController.instance.DisStop();
             while (elapsedTime < endFade)
             {
-                elapsedTime += Time.deltaTime;
+                elapsedTime += Time.unscaledDeltaTime;
                 var fade = endFade - elapsedTime / endFade;
                 _fadeRenderer.SetAlpha(fade);
                 _loadAnimRenderer.SetAlpha(fade);
                 _barRenderer.SetAlpha(fade);
                 yield return null;
             }
+            Time.timeScale = 1;
             _fadeRenderer.SetAlpha(0);
             _loadAnimRenderer.SetAlpha(0);
             _barRenderer.SetAlpha(0);

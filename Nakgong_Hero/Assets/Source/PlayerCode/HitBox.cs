@@ -11,7 +11,7 @@ namespace Source.PlayerCode
             if (other.gameObject.CompareTag("DefaultMonster"))
             {
                 other.gameObject.GetComponent<DefaultMonster>()
-                    .GotAttack(PlayerController.Instance.attackMode, InvManager.instance.GetAttackPower(), InvManager.instance.stansBreak);
+                    .GotAttack(PlayerController.instance.attackMode, InvManager.instance.GetAttackPower(), InvManager.instance.stansBreak);
             }
             else if (other.gameObject.CompareTag("MobGenerator"))
             {
