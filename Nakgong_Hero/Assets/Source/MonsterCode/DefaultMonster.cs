@@ -25,12 +25,22 @@ namespace Source.MonsterCode
         {
             thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
             gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            Init();
+        }
+
+        public virtual void Init()
+        {
+            gameObject.SetActive(true);
             currentHp = monsterData.MaxHp;
             currentHp *= InvManager.instance.difficulty;
             currentSpeed = monsterData.Speed;
             localScaleTemp = transform.localScale;
+            isAggroling = false;
+            isAttacking = false;
+            isAlive = true;
+            CurrentAttack = null;
+            youCantHurtMe = false;
         }
-
         public virtual void Start()
         {
         }
