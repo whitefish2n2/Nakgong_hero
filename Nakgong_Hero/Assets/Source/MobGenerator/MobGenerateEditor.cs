@@ -13,10 +13,14 @@ namespace Source.MobGenerator
             base.OnInspectorGUI();
             var mobEnum = Enum.GetValues(typeof(MobData.MobType));
             var mobArray = (MobData) target;
-            if (mobArray.mobs == null || mobArray.mobs.Length != mobEnum.Length)
+            if (mobArray.Mobs == null || mobArray.Mobs.Length != mobEnum.Length)
             {
-                mobArray.mobPrefabs = new GameObject[mobEnum.Length];
-                mobArray.mobPoolCount = new int[mobEnum.Length];
+                var newArray = new GameObject[mobEnum.Length];
+                
+                for (var i = 0; i < (mobArray.mobPrefabs?.Length ?? 0); i++) newArray[i] = mobArray.mobPrefabs![i];
+                for (var i = (mobArray.mobPrefabs?.Length ?? 0) - 1; i >= 0 && i < newArray.Length; i++) newArray[i] = null;
+
+                mobArray.mobPrefabs = newArray;
             }
             if (mobArray.toggled == null || mobArray.toggled.Length != mobEnum.Length)
                 mobArray.toggled = new bool[mobEnum.Length];

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Source.Item.Datas
 {
@@ -6,19 +7,19 @@ namespace Source.Item.Datas
     {
         public static ActiveItemData instance;
 
-        public CommonItem[] CommonItems;
+        public CommonItem[] commonItems;
         [HideInInspector] public bool[] toggled;
 
         private void Awake()
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            foreach (var o in CommonItems)
+            foreach (var o in commonItems)
             {
                 o.prefab.GetComponent<CommonItemOBJ>().itemInfo = o;
             }
         }
 
-        public GameObject GetCommonItem(ActiveItemType type) => CommonItems[(int)type].prefab;
+        public GameObject GetCommonItem(ActiveItemType type) => commonItems[(int)type].prefab;
     }
 }

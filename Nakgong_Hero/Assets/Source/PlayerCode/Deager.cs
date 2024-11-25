@@ -13,7 +13,7 @@ namespace Source.PlayerCode
         [SerializeField] private float AirWaitTime;
         [SerializeField] private Rigidbody2D rigid;
         public static bool isCrashWithWall = false;
-        private bool _isThrowing;
+        public bool _isThrowing;
         private Vector3 _throwPosTemp;
 
         private void Awake()

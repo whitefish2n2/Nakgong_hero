@@ -15,7 +15,7 @@ namespace Source.PlayerCode
             }
             else if (other.gameObject.CompareTag("MobGenerator"))
             {
-                other.GetComponent<global::MobGenerator>()?.Trigger();
+                other.GetComponent<global::Source.MobGenerator.MobGenerator>()?.Trigger();
             }
         }
     }

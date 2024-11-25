@@ -9,16 +9,17 @@ namespace Source.MapSource.MapMoveManager
     {
         [SerializeField] private UnityEvent OnEnd;
 
-        public void MoveStart(Vector2 to, float time, bool stopPlayer)
+        public void MoveStart(Vector2 to, float time, bool stopPlayer = false, bool destroyOnFinish = false)
         {
-            StartCoroutine(Move(transform.position, to, time, stopPlayer));
+            StartCoroutine(Move(transform.position, to, time, stopPlayer, destroyOnFinish));
         }
-        private void MoveEnd()
+        private void MoveEnd(bool destroyOnFinish)
         {
             OnEnd?.Invoke();
+            if(destroyOnFinish)Destroy(gameObject);
         }
 
-        IEnumerator Move(Vector2 from, Vector2 to, float time, bool stopPlayer)
+        private IEnumerator Move(Vector2 from, Vector2 to, float time, bool stopPlayer, bool destroyOnFinish)
         {
             var elapsedTime = 0f;
             var tagTemp = transform.tag;
@@ -35,7 +36,7 @@ namespace Source.MapSource.MapMoveManager
             gameObject.transform.tag = tagTemp;
             if (stopPlayer)
                 PlayerController.instance.DisStop();
-            MoveEnd();
+            MoveEnd(destroyOnFinish);
         }
     }
 }

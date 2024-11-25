@@ -36,28 +36,50 @@ namespace Source.Item
 
         private GameObject MakeItem()
         {
-            switch (category)
+            if (isRandom)
             {
-                case ItemCategory.None:
-                    break;
-                case ItemCategory.Active:
-                    return ActiveItemData.instance.GetCommonItem(
-                        (ActiveItemType)Random.Range(0, Enum.GetValues(typeof(ActiveItemType)).Length));
-                case ItemCategory.Passive:
-                    return PassiveItemData.instance.GetCommonItem(
-                        (PassiveItemType)Random.Range(0, Enum.GetValues(typeof(PassiveItemType)).Length));
-                case ItemCategory.Instance:
-                    return InstantItemData.instance.GetCommonItem(
-                        (InstantItemType)Random.Range(0, Enum.GetValues(typeof(InstantItemType)).Length));
-                case ItemCategory.ActiveAndPassive:
-                    return Random.Range(0, Enum.GetValues(typeof(ActiveItemType)).Length + Enum.GetValues(typeof(PassiveItemType)).Length)
-                           > Enum.GetValues(typeof(ActiveItemType)).Length
-                        ? PassiveItemData.instance.GetCommonItem(
-                            (PassiveItemType)Random.Range(0, Enum.GetValues(typeof(PassiveItemType)).Length))
-                        : ActiveItemData.instance.GetCommonItem(
+                switch (category)
+                {
+                    case ItemCategory.None:
+                        break;
+                    case ItemCategory.Active:
+                        return ActiveItemData.instance.GetCommonItem(
                             (ActiveItemType)Random.Range(0, Enum.GetValues(typeof(ActiveItemType)).Length));
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    case ItemCategory.Passive:
+                        return PassiveItemData.instance.GetCommonItem(
+                            (PassiveItemType)Random.Range(0, Enum.GetValues(typeof(PassiveItemType)).Length));
+                    case ItemCategory.Instance:
+                        return InstantItemData.instance.GetCommonItem(
+                            (InstantItemType)Random.Range(0, Enum.GetValues(typeof(InstantItemType)).Length));
+                    case ItemCategory.ActiveAndPassive:
+                        return Random.Range(0, Enum.GetValues(typeof(ActiveItemType)).Length + Enum.GetValues(typeof(PassiveItemType)).Length)
+                               > Enum.GetValues(typeof(ActiveItemType)).Length
+                            ? PassiveItemData.instance.GetCommonItem(
+                                (PassiveItemType)Random.Range(0, Enum.GetValues(typeof(PassiveItemType)).Length))
+                            : ActiveItemData.instance.GetCommonItem(
+                                (ActiveItemType)Random.Range(0, Enum.GetValues(typeof(ActiveItemType)).Length));
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                switch (category)
+                {
+                    case ItemCategory.None:
+                        break;
+                    case ItemCategory.Active:
+                        return ActiveItemData.instance.GetCommonItem(
+                            activeItem);
+                    case ItemCategory.Passive:
+                        return PassiveItemData.instance.GetCommonItem(
+                            passiveItem);
+                    case ItemCategory.Instance:
+                        return InstantItemData.instance.GetCommonItem(
+                            instantItem);
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             return null;
         }

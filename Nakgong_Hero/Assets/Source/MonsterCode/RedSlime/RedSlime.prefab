@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 6703475198069208633}
   - component: {fileID: 6277096285860749053}
   - component: {fileID: 7095596357462856323}
-  - component: {fileID: 3909680752394504557}
-  - component: {fileID: 2993852603360995244}
-  - component: {fileID: 2018444333407958497}
+  - component: {fileID: 7021308610597574402}
+  - component: {fileID: 5044287925641367081}
   m_Layer: 3
   m_Name: RedSlime
   m_TagString: DefaultMonster
@@ -31,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.64, y: 0.36, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1813197992745282126}
@@ -98,7 +97,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.15262318, y: 0.020908833}
+  m_Offset: {x: -0.05693555, y: 0.020908833}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -108,9 +107,9 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.0547037, y: 0.59576225}
+  m_Size: {x: 1.4738212, y: 0.59576225}
   m_EdgeRadius: 0
---- !u!114 &3909680752394504557
+--- !u!114 &7021308610597574402
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,50 +118,56 @@ MonoBehaviour:
   m_GameObject: {fileID: 1403492805346452044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c723e660aa6894849a514886a38373b9, type: 3}
+  m_Script: {fileID: 11500000, guid: ad17d756f3b143f439a784ed6afe7dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 80
-  stans: 10
-  knockbackForce: 100
-  damage: 10
-  stunTime: 1
-  attackSpeed: 1
-  attackBoxSize: {x: 1.5, y: 1}
-  leftHpBar: {fileID: 8691870399137266625, guid: 37a74f88a4d9ccc4aa7012c43ba156ef, type: 3}
-  distance: -0.5
---- !u!114 &2993852603360995244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1403492805346452044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63fd9da883590a45bafea5b5b153f67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2018444333407958497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1403492805346452044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0dda7de8c8225648923fe496f9dd9d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 1
-  anim: {fileID: 8080706989522615969}
-  aggroRange: {x: 5, y: 2}
-  aggroSpeed: 3
-  rigid: {fileID: 6277096285860749053}
-  watchingLeft: 1
+  monsterData: {fileID: 11400000, guid: 88ce50266b9b4614488bbae547a071de, type: 2}
+  currentHp: 3
+  thisRigidbody2D: {fileID: 0}
+  youCantHurtMe: 0
+  anim: {fileID: 5044287925641367081}
+  currentSpeed: 0
+  localScaleTemp: {x: 0, y: 0}
+  isAggroling: 0
   isAttacking: 0
-  monster: {fileID: 0}
+  watchingLeft: 1
+  isAlive: 1
+  wave: {fileID: 0}
+  stans: 1
+  stansTemp: 0
+  knockbackForce: 30
+  aggroRange: {x: 7, y: 2}
+  aggroSpeed: 3
+  attackRange: 2
+  distance: -0.5
+  leftBarInstance: {fileID: 0}
+  hpBar: {fileID: 0}
+  attackDelay: 0.75
+  recoveryDelay: 3
+  attackBoxSize: {x: 3, y: 1.5}
+  onAttackPrefer: 0
+--- !u!95 &5044287925641367081
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1403492805346452044}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a740b326fffedda43a72288ce883dd6d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1765822741887576662
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1813197992745282126}
   - component: {fileID: 3074147772920045381}
-  - component: {fileID: 8080706989522615969}
   m_Layer: 3
   m_Name: BataMonster
   m_TagString: DefaultMonster
@@ -241,7 +245,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 730b480610251e84f9e14dadadbc279b, type: 3}
-  m_Color: {r: 1, g: 0.017255682, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.10144546, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -251,25 +255,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &8080706989522615969
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765822741887576662}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 2e63f312ad6cbe9409fc117fff66535c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0

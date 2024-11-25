@@ -1,18 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class MobGenerator : MonoBehaviour
+namespace Source.MobGenerator
 {
-    [SerializeField] private GameObject[] GenList;
-    [Header("생성 위치(상대적)")]
-    [SerializeField] private Vector2[] GenPos;
-
-    public void Trigger()
+    public class MobGenerator : MonoBehaviour
     {
-        for (int i = 0; i < GenList.Length; i++)
+        public MobData.MobType[] genList;
+        [Header("생성 위치(상대적)")]
+        public Vector2[] genPos;
+
+        public virtual void Trigger()
         {
-            GameObject instance = Instantiate(GenList[i], (Vector2)transform.position + GenPos[i], Quaternion.identity); 
+            for (int i = 0; i < genList.Length; i++)
+            {
+                MobData.instance.GetMob(genList[i],(Vector2)transform.position + genPos[i], Quaternion.identity); 
+            }
         }
     }
 }

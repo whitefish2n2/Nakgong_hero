@@ -1,5 +1,7 @@
 using System.Collections;
+using JetBrains.Annotations;
 using Source.Item;
+using Source.MobGenerator;
 using UnityEngine;
 
 namespace Source.MonsterCode
@@ -21,6 +23,7 @@ namespace Source.MonsterCode
         [HideInInspector] public bool isAttacking;
         [HideInInspector] public bool watchingLeft = true;
         [HideInInspector] public bool isAlive = true;
+        [HideInInspector] [CanBeNull] public Wave wave;
         public virtual void Awake()
         {
             thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
@@ -55,7 +58,7 @@ namespace Source.MonsterCode
 
         public abstract void GotAirbornAttack(string attackMode, float damage, float stansMinus, float airBoneValue);
 
-        protected abstract void attack_Effect(float dmg);
+        protected abstract void attack_Logic(float dmg);
         
 
         protected virtual void HpUpdate()
@@ -66,7 +69,14 @@ namespace Source.MonsterCode
             }
         }
 
-        public abstract void Dead();
+        public virtual void Dead()
+        {
+            if (wave)
+            {
+                wave.monsterList.Remove(this);
+                wave.Check();
+            }
+        }
 
         protected IEnumerator Invincibility(float time)
         {

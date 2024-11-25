@@ -10,27 +10,42 @@ namespace Source.MobGenerator
     public class MobData : MonoBehaviour
     {
         public static MobData instance;
-        public Queue<GameObject>[] mobs;
+        // ReSharper disable once UnassignedReadonlyField
+        public Queue<GameObject>[] Mobs;
         public GameObject[] mobPrefabs;
         public int[] mobPoolCount;
         [HideInInspector] public bool[] toggled;
 
         private void Awake()
         {
+            if (instance != null && instance != this)
+            {
+                Destroy(gameObject); // 기존 인스턴스를 유지하고 중복 생성 방지
+                return;
+            }
             instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            int mobTypeCount = Enum.GetValues(typeof(MobType)).Length;
+            Mobs = new Queue<GameObject>[mobTypeCount];
+            for (int i = 0; i < mobTypeCount; i++)
+            {
+                Mobs[i] = new Queue<GameObject>();
+            }
+
         }
 
-        public GameObject GetMob(MobType type, Vector2 pos = default)
+        public GameObject GetMob(MobType type, Vector2 pos = default, quaternion rot = default)
         {
-            if (mobs[(int)type].Count < 1)
+            Debug.Log(Mobs[(int)type].Count);
+            if (Mobs[(int)type].Count < 1)
             {
-                var newMob = Instantiate(mobPrefabs[(int)type], pos, quaternion.identity);
+                var newMob = Instantiate(mobPrefabs[(int)type], pos, rot);
                 return newMob;
             }
             else
             {
-                var newMob = mobs[(int)type].Dequeue();
+                var newMob = Mobs[(int)type].Dequeue();
                 newMob.GetComponent<DefaultMonster>().Init();
                 newMob.SetActive(true);
                 return newMob;
@@ -39,10 +54,10 @@ namespace Source.MobGenerator
 
         public void ReturnMob(MobType type, GameObject obj)
         {
-            if (mobs[(int)type].Count <= mobPoolCount[(int) type])
+            if (Mobs[(int)type].Count <= mobPoolCount[(int) type])
             {
                 obj.SetActive(false);
-                mobs[(int)type].Enqueue(obj);
+                Mobs[(int)type].Enqueue(obj);
             }
             else
             {

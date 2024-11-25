@@ -9,44 +9,34 @@ namespace Source.PlayerCode
         {
             get
             {
-                RaycastHit2D leftRay =
-                    Physics2D.Raycast(new Vector2(PlayerController.instance.playerPos.x-0.5f, PlayerController.instance.playerPos.y - 1f),
-                        Vector2.down, 0.2f, LayerMask.GetMask("Default"));
-                RaycastHit2D rightRay =
-                    Physics2D.Raycast(new Vector2(PlayerController.instance.playerPos.x+0.5f, PlayerController.instance.playerPos.y - 1f),
-                        Vector2.down, 0.2f, LayerMask.GetMask("Default"));
-                if (leftRay.collider is not null)
+                Vector2[] rayOrigins =
                 {
-                    if (leftRay.collider.gameObject.CompareTag("Ground"))
-                    {
-                        PlayerController.instance.movingFloor = null;
-                        return true;
-                    }
-                    if (leftRay.collider.gameObject.CompareTag("MovingFloor"))
-                    {
-                        PlayerController.instance.movingFloor = leftRay.transform.gameObject;
-                        return true;
-                    }
-                    PlayerController.instance.movingFloor = null;
-                }
-                else if (rightRay.collider is not null)
+                    new Vector2(PlayerController.instance.playerPos.x - 0.5f,
+                        PlayerController.instance.playerPos.y - 1f),
+                    new Vector2(PlayerController.instance.playerPos.x + 0.5f,
+                        PlayerController.instance.playerPos.y - 1f)
+                };
+
+                foreach (var origin in rayOrigins)
                 {
-                    if (rightRay.collider.gameObject.CompareTag("Ground"))
+                    RaycastHit2D ray = Physics2D.Raycast(origin, Vector2.down, 0.2f, LayerMask.GetMask("Default"));
+
+                    if (ray.collider)
                     {
-                        PlayerController.instance.movingFloor = null;
-                        return true;
+                        if (ray.collider.CompareTag("Ground"))
+                        {
+                            PlayerController.instance.movingFloor = null;
+                            return true;
+                        }
+                        if (ray.collider.CompareTag("MovingFloor"))
+                        {
+                            PlayerController.instance.movingFloor = ray.transform.gameObject;
+                            return true;
+                        }
                     }
-                    if (rightRay.collider.gameObject.CompareTag("MovingFloor"))
-                    {
-                        PlayerController.instance.movingFloor = rightRay.transform.gameObject;
-                        return true;
-                    }
-                    PlayerController.instance.movingFloor = null;
                 }
-                else
-                {
-                    return false;
-                }
+
+                PlayerController.instance.movingFloor = null;
                 return false;
             }
         }

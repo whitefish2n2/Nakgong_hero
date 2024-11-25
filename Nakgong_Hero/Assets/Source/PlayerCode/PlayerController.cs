@@ -175,7 +175,13 @@ namespace Source.PlayerCode
                         //좌클릭-낙공 우클릭-던지기
                         if (Input.GetMouseButtonDown(0))
                         {
-                            if (_isReadyNakgong)
+                            if (_isReadyNakgong && isThrowing && !isGetHooking)
+                            {
+                                isGetHooking = true;
+                                _goNakgong = true;
+                                GetHooking();
+                            }
+                            else if (!_isNakGonging && _isReadyNakgong&& !isGetHooking && !isThrowing && !onGround && !_deager._isThrowing)
                             {
                                 NakGong();
                             }
@@ -193,7 +199,7 @@ namespace Source.PlayerCode
 
                         if (Input.GetMouseButtonDown(1))
                         {
-                            if (!_isNakGonging && !isThrowing && !isGetHooking && !_isReadyNakgong)
+                            if (!_isNakGonging && !isThrowing && !isGetHooking && !_deager._isThrowing)
                             {
                                 Throwing();
                             }
@@ -232,7 +238,7 @@ namespace Source.PlayerCode
                 throwOnAirCount = _throwOnAirCountTemp;
             //아이템 인터렉트 코드
             RaycastHit2D interactRay = Physics2D.Raycast(new Vector2(playerPos.x, playerPos.y - 1f),
-                (goingRight ? Vector3.right:Vector3.left), 2, LayerMask.GetMask("Items", "MovingObjects"));
+                (goingRight ? Vector3.right:Vector3.left), 2, LayerMask.GetMask("Items"));
             
             if (interactRay.collider?.gameObject.CompareTag("CommonItem") ?? false)
             {
@@ -362,10 +368,10 @@ namespace Source.PlayerCode
 
         private void EarthCrushing()
         {
-            if (!_isCanUseEarthCrushing || doNotAttack) return;
+            if (!_isCanUseEarthCrushing || doNotAttack || _deager._isThrowing|| _isReadyNakgong || !onGround) return;
             
             StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
-            StartCoroutine(CoolBool(1, (v=> _isCanUseEarthCrushing = v)));
+            GameUtil.instance.CoolBool(1, v=> _isCanUseEarthCrushing = v);
             RaycastHit2D[] rayR = { };
             RaycastHit2D[] rayL = { };
             Physics2D.RaycastNonAlloc(transform.position, Vector2.right, rayR, earthCrushingSize.x, LayerMask.GetMask("Monster"));
@@ -403,7 +409,6 @@ namespace Source.PlayerCode
                 transform.position += (sword.transform.position - playerPos).normalized * (Time.deltaTime * getHookSpeed);
                 if (_playerCollider.IsColliding)
                 {
-                    isGetHooking = false;
                     _goNakgong = false;
                     break;
                 }
@@ -412,22 +417,35 @@ namespace Source.PlayerCode
             isGetHooking = false;
             isStun = false;
             _rigid.gravityScale = gravityTemp;
+            if (_isReadyNakgong)
+            {
+                //낙공 준비 모션으로 anim 수정
+            }
             if (_goNakgong)
             {
+                if (Vector2.Distance(sword.transform.position, transform.position) < 0.9f)
+                {
+                    _deager.InstanceTurnBack();
+                    Debug.Log("빠른;");
+                }
+                else _deager.StartCoroutine("TurnBack");
+                while(_deager._isThrowing) yield return null;
                 _isReadyNakgong = true;
                 _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower/2);
-                _deager.InstanceTurnBack();
                 NakGong();
                 isGetHooking = false;
                 _goNakgong = false;
                 yield break;
             }
-            if(Vector2.Distance(sword.transform.position,transform.position) > 0.9f)
-                _deager.InstanceTurnBack();
-            else if(_deager.isActiveAndEnabled)
-                _deager.StartCoroutine("TurnBack");
             isGetHooking = false;
             _goNakgong = false;
+            if(Vector2.Distance(sword.transform.position,transform.position) < 0.9f)
+            {
+                _deager.InstanceTurnBack();
+                Debug.Log("빠른;");
+            }
+            else _deager.StartCoroutine("TurnBack");
+                
         }
 
         //점프(2단점프 포함)
@@ -488,7 +506,7 @@ namespace Source.PlayerCode
                 StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
                 _anim.SetTrigger(NakgongEnd);
                 _horizontal = 0;
-                StartCoroutine(CoolBool(0.5f, v => isStun = v, false));
+                GameUtil.instance.CoolBool(0.5f, v => isStun = v, false);
                 if (attackMode == "Default")
                 {
                     InvManager.instance.airBonePower = 0f;
@@ -509,13 +527,6 @@ namespace Source.PlayerCode
                 yield return null;
             }
             _noise.m_AmplitudeGain = end;
-        }
-
-        private IEnumerator CoolBool(float t, Action<bool> target, bool to = true)
-        {
-            target(!to);
-            yield return new WaitForSeconds(t);
-            target(to);
         }
 
         private void ChangeNakgongCam()
@@ -564,7 +575,7 @@ namespace Source.PlayerCode
             _rigid.linearVelocity = Vector2.zero;
         }
 
-        private IEnumerator currentXBreak;
+        private IEnumerator _currentXBreak;
         public void X_BreakTil(float t)
         {
             StartCoroutine(XBreakTil(t));
@@ -572,7 +583,7 @@ namespace Source.PlayerCode
 
         public void StopXBreak()
         {
-            StopCoroutine(currentXBreak);
+            StopCoroutine(_currentXBreak);
             isStun = false;
         }
         private IEnumerator XBreakTil(float t)

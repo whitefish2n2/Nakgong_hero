@@ -1,15 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using Source.Item;
 using Source.PlayerCode;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-namespace Source.MonsterCode.Slime
+namespace Source.MonsterCode.RedSlime
 {
-    public class Slime : DefaultCommonMonster
+    public class RedSlime : DefaultCommonMonster
     {
         [SerializeField] private float attackDelay;
         [SerializeField] private float recoveryDelay;

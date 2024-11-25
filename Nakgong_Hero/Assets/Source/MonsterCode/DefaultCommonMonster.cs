@@ -1,4 +1,5 @@
 using Source.Item;
+using Source.MobGenerator;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,6 +14,7 @@ namespace Source.MonsterCode
         public float knockbackForce;
         public Vector2 aggroRange;
         public float aggroSpeed;
+        public float attackRange;
         [Header("HP BAR")]
         [SerializeField] public float distance;
         [HideInInspector] public GameObject leftBarInstance;
@@ -57,7 +59,7 @@ namespace Source.MonsterCode
             
         }
 
-        protected override void attack_Effect(float dmg)
+        protected override void attack_Logic(float dmg)
         {
             GameObject instance = Instantiate(GameStatic.instance.damagePrefab,
                 GameStatic.instance.hpCanvas.transform);
@@ -73,7 +75,8 @@ namespace Source.MonsterCode
         public override void Dead()
         {
             Debug.Log("으앙죽음ㅜㅜ");
-            Destroy(gameObject);//죽는 메서드(풀링 관리, 사망 애니메이션 재생)
+            MobData.instance.ReturnMob(monsterData.Type,gameObject);
+            base.Dead();
         }
     }
 }

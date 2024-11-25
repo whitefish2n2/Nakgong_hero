@@ -17,14 +17,14 @@ namespace Editor
             var itemsEnum = Enum.GetValues(typeof(ActiveItemType));
             
             var commonItemArray = (ActiveItemData)target;
-            if (commonItemArray.CommonItems is not { Length: > 0 } || commonItemArray.CommonItems.Length != itemsEnum.Length)
+            if (commonItemArray.commonItems is not { Length: > 0 } || commonItemArray.commonItems.Length != itemsEnum.Length)
             {
                 var newArray = new CommonItem[itemsEnum.Length];
                 
-                for (var i = 0; i < (commonItemArray.CommonItems?.Length ?? 0); i++) newArray[i] = commonItemArray.CommonItems![i];
-                for (var i = (commonItemArray.CommonItems?.Length ?? 0) - 1; i >= 0 && i < newArray.Length; i++) newArray[i] = new CommonItem();
+                for (var i = 0; i < (commonItemArray.commonItems?.Length ?? 0); i++) newArray[i] = commonItemArray.commonItems![i];
+                for (var i = (commonItemArray.commonItems?.Length ?? 0) - 1; i >= 0 && i < newArray.Length; i++) newArray[i] = new CommonItem();
 
-                commonItemArray.CommonItems = newArray;
+                commonItemArray.commonItems = newArray;
             }
 
             if (commonItemArray.toggled == null || commonItemArray.toggled.Length != itemsEnum.Length)
@@ -35,7 +35,7 @@ namespace Editor
             foreach (var type in itemsEnum)
             {
                 var idx = (int)type;
-                var commonItem = commonItemArray.CommonItems[idx];
+                var commonItem = commonItemArray.commonItems[idx];
                 if (commonItemArray.toggled[idx] == EditorGUILayout.BeginFoldoutHeaderGroup(commonItemArray.toggled[idx], $"{type}: {commonItem.ItemName}"))
                 {
                     commonItem.itemType = ItemCategory.Active;
