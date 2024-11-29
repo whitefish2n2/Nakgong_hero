@@ -37,13 +37,13 @@ namespace Source.MonsterCode.Slime
                 case "Default":
                     float realDamage = gotDamage + InvManager.instance.airBonePower/100f;
                     attack_Logic(realDamage);
-                    if (!isAlive) return;
+                    if (!isAlive|| !isActiveAndEnabled) return;
                     KnockBack(stansMinus);
                     StartCoroutine(Invincibility(0.1f));
                     return;
                 case "Throw":
                     attack_Logic(gotDamage);
-                    if (!isAlive) return;
+                    if (!isAlive|| !isActiveAndEnabled) return;
                     KnockBack(stansMinus);
                     StartCoroutine(Invincibility(0.3f));
                     break;
@@ -88,7 +88,7 @@ namespace Source.MonsterCode.Slime
             foreach(var o in ray)
             {
                 if(o.transform.CompareTag("Player"))
-                    PlayerController.GotAttack(monsterData.Damage, monsterData.StunPower);
+                    PlayerController.instance.GotAttack(monsterData.Damage, stunTime:monsterData.StunPower);
             }
             yield return new WaitForSeconds(recoveryDelay);
             isAttacking = false;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Source.PlayerCode;
 using Source.UiCode;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -87,20 +88,18 @@ namespace Source.Item
         }
         public void GetRedPortion(CommonItem item)
         {
-            if (hp < 100f)
+            if (hp < maxHp)
             {
                 hp += Random.Range(5, 10);
                 if (hp < maxHp)
                 {
-                    hp = maxHp;
+                    hp += maxHp/5;
                 }
+                HpUiManager.instance.UpdateHpBar();
             }
             else
             {
-                if (hp < maxHp)
-                {
-                    hp = maxHp;
-                }
+                return;
             }
         }
 

@@ -1,9 +1,11 @@
+using System;
 using Source.Item;
 using Source.MobGenerator;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Source.MonsterCode
 {
@@ -18,6 +20,7 @@ namespace Source.MonsterCode
         [Header("HP BAR")]
         [SerializeField] public float distance;
         [HideInInspector] public GameObject leftBarInstance;
+        [HideInInspector] public Image leftBar;
         [HideInInspector] public RectTransform hpBar;
 
         public override void Awake()
@@ -26,8 +29,11 @@ namespace Source.MonsterCode
             leftBarInstance = Instantiate(GameStatic.instance.hpBarPrefabMini, GameStatic.instance.hpCanvas.GetComponent<RectTransform>());
             leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
             hpBar = leftBarInstance.GetComponent<RectTransform>();
+            hpBar.localScale = (5f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
             stans *= InvManager.instance.difficulty;
             stansTemp = stans;
+            leftBar = leftBarInstance.GetComponent<Image>();
+            HpUpdate();
         }
 
         private void Update()
@@ -36,21 +42,27 @@ namespace Source.MonsterCode
                 GameStatic.instance.mainCam.WorldToScreenPoint(new Vector2(transform.position.x, transform.position.y + distance));
         }
 
+        private void OnDestroy()
+        {
+            if(leftBarInstance)
+                Destroy(leftBarInstance);
+        }
+
         // Update is called once per frame
         protected override void HpUpdate()
         {
-            leftBarInstance.GetComponent<Image>().fillAmount = currentHp / monsterData.MaxHp;
+            leftBar.fillAmount = currentHp / monsterData.MaxHp;
             if (currentHp / monsterData.MaxHp < 0.3f)
             {
-                leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(180, 0, 0,255);
+                leftBar.color = new Color32(180, 0, 0,255);
             }
             else if (currentHp / monsterData.MaxHp < 0.7f)
             {
-                leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(225, 80, 0,255);
+                leftBar.color = new Color32(225, 80, 0,255);
             }
             else
             {
-                leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(20, 140, 0,255);
+                leftBar.color = new Color32(20, 140, 0,255);
             }
             if (currentHp <= 0f)
             {

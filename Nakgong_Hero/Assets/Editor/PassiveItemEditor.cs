@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using Source.Item;
 using Source.Item.Datas;
@@ -58,3 +59,4 @@ namespace Editor
         }
     }
 }
+#endif

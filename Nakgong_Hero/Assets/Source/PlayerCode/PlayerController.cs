@@ -8,6 +8,7 @@ using Source.UiCode;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Source.PlayerCode
 {
@@ -67,6 +68,7 @@ namespace Source.PlayerCode
         public bool isStop;
         public bool doNotAttack;
         public bool isStun;
+        public bool youCantHurtMe;
         [SerializeField] private bool goingRight;
         [SerializeField] private bool sHold;
         [SerializeField] private bool onGround;
@@ -340,25 +342,23 @@ namespace Source.PlayerCode
         //대검 던지기
         private void Throwing()
         {
+            if (throwOnAirCount <= 0) return;
             RefreshHoldDeager(false);
             sword.transform.position = holdingSword.transform.position;
             sword.transform.rotation = holdingSword.transform.rotation;
             ChangeDeagerMode(SwordMode.Throw);
-            if (throwOnAirCount > 0)
-            {
-                sword.GetComponent<SpriteRenderer>().color = Color.white;
-                throwOnAirCount--;
-                isThrowing = true;
-                Vector3 mousePos = _camera!.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
-                    Input.mousePosition.y, 0f));
-                _deager.ThrowAt_withThrowRange(mousePos, chainLength);
-            }
+            sword.GetComponent<SpriteRenderer>().color = Color.white;
+            throwOnAirCount--;
+            isThrowing = true;
+            Vector3 mousePos = _camera!.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,
+                Input.mousePosition.y, 0f));
+            _deager.ThrowAt_withThrowRange(mousePos, chainLength);
         }
         //대검으로 이동
         private void GetHooking()
         {
-            Deager.isCrashWithWall = false;
-            GroundDeagerCheck.dontCheck = true;
+            _deager.isCrashWithWall = false;
+            _deager.dontCheckWithWall = true;
             StartCoroutine(GetHook());
         }
 
@@ -389,10 +389,13 @@ namespace Source.PlayerCode
         }
 
         //공격받았을때
-        public static void GotAttack(float damage, float stunTime = 0)
+        public void GotAttack(float damage, bool absolute = false, float invincibleTime = 0, float stunTime = 0)
         {
+            if (youCantHurtMe)  if(!absolute) return;
             InvManager.instance.hp -= damage;
             HpUiManager.instance.UpdateHpBar();
+            if(invincibleTime > 0) Invincibility(invincibleTime);
+            if(stunTime>0)GameUtil.instance.CoolBool(stunTime, v=> isStun = v, false);
         }
 
         //대검쪽으로 이동 코루틴
@@ -463,14 +466,12 @@ namespace Source.PlayerCode
                     _isJumping = false;
                     _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
                     StartCoroutine(NakgongManage());
-                    throwOnAirCount = _throwOnAirCountTemp;
                     yield break;
                 }
                 yield return null;
             }
 
             _isJumping = false;
-            throwOnAirCount = _throwOnAirCountTemp;
         }
         //낙공할 때 바닥에 닿을 때까지 속도가 느려지고 낙공 가중치 만드는 청년(낙공 판정 서포터)
         private IEnumerator NakgongManage()
@@ -517,6 +518,10 @@ namespace Source.PlayerCode
             _rigid.gravityScale = InvManager.instance.startGravityScale;
         }
 
+        private void Invincibility(float t)
+        {
+            GameUtil.instance.CoolBool(t,v=>youCantHurtMe = v, false);
+        }
         private IEnumerator MainCameraShakeDiscourage(float start, float end, float time)
         {
             float elapsedTime = 0;
@@ -563,6 +568,7 @@ namespace Source.PlayerCode
             isThrowing = false;
             isGetHooking = false;
             _goNakgong = false;
+            isStun = false;
             _anim.StopPlayback();
             _anim.SetTrigger(NakgongEnd);
             ChangeNakgongCam();
@@ -605,6 +611,14 @@ namespace Source.PlayerCode
         {
             Throw,
             Hold
+        }
+
+        public void HpCheck()
+        {
+            if (InvManager.instance.hp <= 0)
+            {
+                SceneManager.LoadScene("DeadScene");
+            }
         }
     }
 }

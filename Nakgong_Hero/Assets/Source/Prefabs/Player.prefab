@@ -255,7 +255,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -10
+  m_SortingOrder: -8
   m_Time: 0.312
   m_PreviewTimeScale: 1
   m_Parameters:
@@ -659,6 +659,7 @@ MonoBehaviour:
   isStop: 1
   doNotAttack: 1
   isStun: 0
+  youCantHurtMe: 0
   goingRight: 1
   sHold: 0
   onGround: 0
@@ -697,7 +698,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.14461422, y: -0.43029517}
+  m_Offset: {x: -0.16312361, y: -0.43029517}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -707,7 +708,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.80885315, y: 1.1988224}
+  m_Size: {x: 0.7718344, y: 1.1988224}
   m_EdgeRadius: 0
 --- !u!95 &8880297405116499839
 Animator:

@@ -5,10 +5,6 @@ namespace Source.Item
         RedPortion,
         Weight,
         Hone,
-        Blue,
-        Feather,
-        Heart,
-        Gold,
     }
 
     public enum ActiveItemType

@@ -7,7 +7,7 @@ namespace Source
     public class GameStatic : MonoBehaviour
     {
         public static GameStatic instance;
-        [HideInInspector] public GameObject hpCanvas;
+        public GameObject hpCanvas;
         [HideInInspector] public Camera mainCam;
         public GameObject damagePrefab;
         public GameObject hpBarPrefabMini;
@@ -20,7 +20,6 @@ namespace Source
 
         private void Start()
         {
-            hpCanvas = GameObject.FindGameObjectWithTag("Canvas");
             Debug.Log(hpCanvas.name);
         }
     }

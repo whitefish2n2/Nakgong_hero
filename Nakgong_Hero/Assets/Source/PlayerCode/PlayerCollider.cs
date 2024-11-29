@@ -19,7 +19,7 @@ namespace Source.PlayerCode
 
                 foreach (var origin in rayOrigins)
                 {
-                    RaycastHit2D ray = Physics2D.Raycast(origin, Vector2.down, 0.2f, LayerMask.GetMask("Default"));
+                    RaycastHit2D ray = Physics2D.Raycast(origin, Vector2.down, 0.2f, LayerMask.GetMask("Default","MovingObjects"));
 
                     if (ray.collider)
                     {
@@ -28,7 +28,7 @@ namespace Source.PlayerCode
                             PlayerController.instance.movingFloor = null;
                             return true;
                         }
-                        if (ray.collider.CompareTag("MovingFloor"))
+                        else if (ray.collider.CompareTag("MovingFloor"))
                         {
                             PlayerController.instance.movingFloor = ray.transform.gameObject;
                             return true;

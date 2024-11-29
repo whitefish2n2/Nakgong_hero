@@ -4002,7 +4002,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d15290e5ababe634385cb46304ed145e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Deager: {fileID: 0}
 --- !u!114 &75663489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4298,6 +4297,7 @@ MonoBehaviour:
         m_CallState: 2
   repeatCount: 3
   isOpened: 0
+  openSprite: {fileID: 0}
 --- !u!114 &628251415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4626,6 +4626,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveTo: {x: 0, y: 4}
   moveTime: 2
+  stopPlayer: 0
+  destroyOnEnd: 0
 --- !u!114 &1723119754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4693,6 +4695,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   interactOnUser: 1
+  dontCheck: 1
 --- !u!1 &1748692228
 GameObject:
   m_ObjectHideFlags: 0
@@ -4909,37 +4912,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1903230523
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1903230524}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1903230524
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1903230523}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.14, y: 126.17, z: -9.924477}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1939954810
 GameObject:
   m_ObjectHideFlags: 0
@@ -4989,6 +4961,7 @@ MonoBehaviour:
         m_CallState: 2
   repeatCount: 1
   isOpened: 0
+  openSprite: {fileID: 0}
 --- !u!114 &1939954812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5314,14 +5287,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172bce2f121ccf84ca2610244a94c672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenList:
-  - {fileID: 1403492805346452044, guid: 6facbc20bd17c54458a5c6a777deaaf8, type: 3}
-  - {fileID: 1403492805346452044, guid: 6facbc20bd17c54458a5c6a777deaaf8, type: 3}
-  - {fileID: 1403492805346452044, guid: 6facbc20bd17c54458a5c6a777deaaf8, type: 3}
-  GenPos:
-  - {x: 2, y: -1}
-  - {x: 0, y: -1}
-  - {x: -2, y: -1}
+  genList: 
+  genPos: []
 --- !u!61 &2103473461
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5500,4 +5467,3 @@ SceneRoots:
   - {fileID: 4709251787186322036}
   - {fileID: 841250038}
   - {fileID: 13616257}
-  - {fileID: 1903230524}

@@ -12,10 +12,10 @@ namespace Source.PlayerCode
         [SerializeField] private float TurnBackSpeed;
         [SerializeField] private float AirWaitTime;
         [SerializeField] private Rigidbody2D rigid;
-        public static bool isCrashWithWall = false;
+        public bool isCrashWithWall = false;
         public bool _isThrowing;
         private Vector3 _throwPosTemp;
-
+        public bool dontCheckWithWall = false;
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -44,6 +44,13 @@ namespace Source.PlayerCode
                 if (other.CompareTag("DefaultMonster"))
                 {
                     other.GetComponent<DefaultMonster>().GotAttack("Throw", InvManager.instance.GetAttackPower() * 1371, InvManager.instance.stansBreak*40);
+                }
+                if ((other.CompareTag("Ground") || other.CompareTag("MovingFloor")) && !dontCheckWithWall)
+                {
+                    if (PlayerController.instance.isThrowing && !PlayerController.instance.isGetHooking)
+                    {
+                        isCrashWithWall = true;
+                    }
                 }
             }
         
@@ -77,7 +84,7 @@ namespace Source.PlayerCode
 
         private IEnumerator TurnBack()
         {
-            GroundDeagerCheck.dontCheck = true;
+            dontCheckWithWall = true;
             isCrashWithWall = false;
             yield return new WaitForSeconds(AirWaitTime);
             var turnbackTemp = TurnBackSpeed;
@@ -92,7 +99,7 @@ namespace Source.PlayerCode
             TurnBackSpeed = turnbackTemp;
             PlayerController.instance.isGetHooking = false;
             PlayerController.instance.isThrowing = false;
-            GroundDeagerCheck.dontCheck = false;
+            dontCheckWithWall = false;
             gameObject.transform.position =
                 new Vector3(PlayerController.instance.playerPos.x,
                     PlayerController.instance.playerPos.y + 0.26f, 0f);
@@ -103,11 +110,11 @@ namespace Source.PlayerCode
 
         public void InstanceTurnBack()
         {
-            GroundDeagerCheck.dontCheck = true;
+            dontCheckWithWall = true;
             isCrashWithWall = false;
             PlayerController.instance.isGetHooking = false;
             PlayerController.instance.isThrowing = false;
-            GroundDeagerCheck.dontCheck = false;
+            dontCheckWithWall = false;
             _isThrowing = false;
             PlayerController.instance.ChangeDeagerMode(PlayerController.SwordMode.Hold);
         }

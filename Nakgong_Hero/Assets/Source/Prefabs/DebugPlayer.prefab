@@ -539,7 +539,9 @@ MonoBehaviour:
   TurnBackSpeed: 2
   AirWaitTime: 0.5
   rigid: {fileID: 3935875808881769275}
+  isCrashWithWall: 0
   _isThrowing: 0
+  dontCheckWithWall: 0
 --- !u!61 &5924677988935784876
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2059,7 +2061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfce5ff124aff0741ab9b2a7bb3469d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpCanvas: {fileID: 0}
+  hpCanvas: {fileID: 8864028391038986374}
   mainCam: {fileID: 0}
   damagePrefab: {fileID: 2119142778087618162, guid: 1e1b7f11f5968d540a592354beb10829, type: 3}
   hpBarPrefabMini: {fileID: 8691870399137266625, guid: 37a74f88a4d9ccc4aa7012c43ba156ef, type: 3}

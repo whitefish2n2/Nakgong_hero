@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Source.Item
+namespace Source.Item.Datas
 {
     public class InstantItemData : MonoBehaviour
     {

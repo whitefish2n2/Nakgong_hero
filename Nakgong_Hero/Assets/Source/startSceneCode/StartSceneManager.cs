@@ -1,41 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
-using Source;
+using Scenes.Stages;
 using Source.GameManager;
 using Source.PlayerCode;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 
-public class StartSceneManager : MonoBehaviour
+namespace Source.startSceneCode
 {
-    [SerializeField] private GameObject baseObject;
-    [SerializeField] private GameObject[] titles;
-    [SerializeField] private GameObject wallForClose;
-    public void PressAnyButton()
+    public class StartSceneManager : StageManager
     {
-        if (Input.GetKey(KeyCode.D))
+        [SerializeField] private GameObject baseObject;
+        [SerializeField] private GameObject[] titles;
+        [SerializeField] private GameObject wallForClose;
+        public void PressAnyButton()
         {
-            PlayerController.instance.DisStop();
-            LoadStartScene(0);
-            return;
+            if (Input.GetKey(KeyCode.D))
+            {
+                PlayerController.instance.DisStop();
+                LoadStartScene(0);
+                return;
+            }
+            baseObject.GetComponent<PlayableDirector>().Play();
+            foreach(var o in titles)
+            {
+                o.SetActive(false);
+            }
         }
-        baseObject.GetComponent<PlayableDirector>().Play();
-        foreach(var o in titles)
+
+        public override void NextScene()
         {
-            o.SetActive(false);
+            PlayerController.instance.BeAttackAble();
+            base.NextScene();
         }
-    }
 
-    public void LoadStartScene(float d = 2)
-    {
-        PlayerController.instance.BeAttackAble();
-        SceneLoader.Instance.LoadScene("Stage1",d,new Vector2(-14f,126f), refreshPlayerStates:true);
-    }
+        public void LoadStartScene(float d = 2)
+        {
+            SceneLoader.Instance.LoadScene("Stage1",d,new Vector2(-14f,126f), refreshPlayerStates:true);
+        }
 
-    public void StartAction()
-    {
-        wallForClose.SetActive(true);
-    }
+        public void StartAction()
+        {
+            wallForClose.SetActive(true);
+        }
     
+    }
 }

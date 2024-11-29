@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+
+
 using System;
 using Source.Item;
 using UnityEditor;
@@ -42,4 +45,4 @@ namespace Source.MobGenerator
         }
     }
 }
-  
+#endif

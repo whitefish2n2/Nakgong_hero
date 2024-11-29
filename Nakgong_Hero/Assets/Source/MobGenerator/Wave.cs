@@ -19,7 +19,7 @@ namespace Source.MobGenerator
             isTrigged = true;
             for (int i = 0; i < genList.Length; i++)
             {
-                var mob = MobData.instance.GetMob(genList[i],(Vector2)transform.position + genPos[i], Quaternion.identity);
+                    var mob = MobData.instance.GetMob(genList[i],(Vector2)transform.position + genPos[i], Quaternion.identity);
                 var mobCode = mob.GetComponent<DefaultMonster>();
                 mobCode.wave = this;
                 monsterList.Add(mobCode);

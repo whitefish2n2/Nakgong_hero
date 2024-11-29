@@ -86,7 +86,7 @@ namespace Source.MonsterCode.RedSlime
             foreach(var o in ray)
             {
                 if(o.transform.CompareTag("Player"))
-                    PlayerController.GotAttack(monsterData.Damage, monsterData.StunPower);
+                    PlayerController.instance.GotAttack(monsterData.Damage, stunTime: monsterData.StunPower);
             }
             yield return new WaitForSeconds(recoveryDelay);
             isAttacking = false;

@@ -10,6 +10,7 @@ namespace Source.Item
         [SerializeField] private UnityEvent onOpen;
         [SerializeField] private int repeatCount = 1;
         [SerializeField] private bool isOpened; 
+        [SerializeField] private Sprite openSprite;
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (isOpened) return;
@@ -19,6 +20,7 @@ namespace Source.Item
             {
                 onOpen?.Invoke();
             }
+            gameObject.GetComponent<SpriteRenderer>().sprite = openSprite;
         }
     }
 }
