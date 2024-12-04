@@ -34,6 +34,8 @@ namespace Source.UiCode
         private IEnumerator _currentUiSwitchAnim;
         private IEnumerator _descriptActionManager;
         public static InventoryUiManager Instance;
+        private static readonly int DisHover = Animator.StringToHash("DisHover");
+        private static readonly int Hover = Animator.StringToHash("Hover");
         public ItemInInventory currentHoverItem;
         private void Awake()
         {
@@ -47,7 +49,6 @@ namespace Source.UiCode
         private void Start()
         {
             ReFreshStats();
-            descriptionPanelAnimator.Play("DescriptFadeOut");
         }
 
         public void SwitchInvUi()
@@ -110,12 +111,14 @@ namespace Source.UiCode
             itemDescriptionBody.text = item.itemInfo.Discription;
             descriptionItemIcon.sprite = item.itemInfo.InvSprite;
             currentHoverItem = item;
-            descriptionPanelAnimator.Play("DescriptFadeIn");
+            descriptionPanelAnimator.SetBool(DisHover,false);
+            descriptionPanelAnimator.SetBool(Hover,true);
         }
 
         public void DisHoverItem()
         {
-            descriptionPanelAnimator.Play("DescriptFadeOut");
+            descriptionPanelAnimator.SetBool(DisHover,true);
+            descriptionPanelAnimator.SetBool(Hover,false);
             currentHoverItem = null;
         }
         private IEnumerator DescriptionUiActionManager()

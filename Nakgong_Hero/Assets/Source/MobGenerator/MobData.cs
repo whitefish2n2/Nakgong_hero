@@ -46,7 +46,7 @@ namespace Source.MobGenerator
             else
             {
                 var newMob = Mobs[(int)type].Dequeue();
-                newMob.GetComponent<DefaultMonster>().Init();
+                    newMob.GetComponent<DefaultMonster>().Init();
                 newMob.SetActive(true);
                 newMob.transform.position = pos;
                 newMob.transform.rotation = rot;
