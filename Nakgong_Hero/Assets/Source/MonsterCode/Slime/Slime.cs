@@ -96,24 +96,24 @@ namespace Source.MonsterCode.Slime
 
         private void KnockBack(float stanceMinus)
         {
-            stans -= stanceMinus;
-            if (stans > 0f) return;
+            currentStans -= stanceMinus;
+            if (currentStans > 0f) return;
             if(CurrentAttack is not null)
                 StopCoroutine(CurrentAttack);
             anim.StopPlayback();
             GameUtil.instance.CoolBool(recoveryDelay,v=>isStunned = v, false);
             isAttacking = false;
             thisRigidbody2D.AddForce(gameObject.transform.position.x - PlayerController.instance.playerPos.x > 0
-                ? new Vector2(1f * knockbackForce - stans, InvManager.instance.airBonePower)
+                ? new Vector2(1f * knockbackForce - currentStans, InvManager.instance.airBonePower)
                 : new Vector2(-1f * knockbackForce, InvManager.instance.airBonePower));
-            stans = stansTemp;
+            currentStans = stansTemp;
         }
         public void AirBone(float stansMinus, float airBoneValue)
         {
-            stans -= stansMinus;
-            if (stans > 0f) return;
+            currentStans -= stansMinus;
+            if (currentStans > 0f) return;
             thisRigidbody2D.AddForce(new Vector2(gameObject.transform.position.x - PlayerController.instance.playerPos.x > 0 ? 0.3f:-0.3f, airBoneValue));
-            stans =stansTemp;
+            currentStans =stansTemp;
         }
         public void FixedUpdate()
         {

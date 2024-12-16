@@ -290,7 +290,7 @@ Transform:
   m_GameObject: {fileID: 467068649003898532}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -29.1, y: 111.5, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -738,63 +738,7 @@ MonoBehaviour:
     onRemove:
       m_PersistentCalls:
         m_Calls: []
-  - itemType: 3
-    isDestroyItem: 0
-    ItemName: "\u3141"
-    prefab: {fileID: 0}
-    InvSprite: {fileID: 0}
-    invIcon: {fileID: 0}
-    Discription: "\u3141"
-    interactionDescription: "\uD68D\uB4DD"
-    OnGet:
-      m_PersistentCalls:
-        m_Calls: []
-    onRemove:
-      m_PersistentCalls:
-        m_Calls: []
-  - itemType: 3
-    isDestroyItem: 0
-    ItemName: "\uD558\uB69C"
-    prefab: {fileID: 0}
-    InvSprite: {fileID: 0}
-    invIcon: {fileID: 0}
-    Discription: 
-    interactionDescription: "\uD68D\uB4DD"
-    OnGet:
-      m_PersistentCalls:
-        m_Calls: []
-    onRemove:
-      m_PersistentCalls:
-        m_Calls: []
-  - itemType: 3
-    isDestroyItem: 1
-    ItemName: 
-    prefab: {fileID: 0}
-    InvSprite: {fileID: 0}
-    invIcon: {fileID: 0}
-    Discription: 
-    interactionDescription: "\uD68D\uB4DD"
-    OnGet:
-      m_PersistentCalls:
-        m_Calls: []
-    onRemove:
-      m_PersistentCalls:
-        m_Calls: []
-  - itemType: 3
-    isDestroyItem: 1
-    ItemName: 
-    prefab: {fileID: 0}
-    InvSprite: {fileID: 0}
-    invIcon: {fileID: 0}
-    Discription: 
-    interactionDescription: "\uD68D\uB4DD"
-    OnGet:
-      m_PersistentCalls:
-        m_Calls: []
-    onRemove:
-      m_PersistentCalls:
-        m_Calls: []
-  toggled: 00000000000000
+  toggled: 000000
 --- !u!1 &2568123979751181852
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,7 +783,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56cbfed44b69cb40be9af400fc81ccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  commonItems: []
+  commonItems:
+  - itemType: 1
+    isDestroyItem: 1
+    ItemName: 
+    prefab: {fileID: 0}
+    InvSprite: {fileID: 0}
+    invIcon: {fileID: 0}
+    Discription: 
+    interactionDescription: "\uD68D\uB4DD"
+    OnGet:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemove:
+      m_PersistentCalls:
+        m_Calls: []
+  - itemType: 1
+    isDestroyItem: 1
+    ItemName: 
+    prefab: {fileID: 0}
+    InvSprite: {fileID: 0}
+    invIcon: {fileID: 0}
+    Discription: 
+    interactionDescription: "\uD68D\uB4DD"
+    OnGet:
+      m_PersistentCalls:
+        m_Calls: []
+    onRemove:
+      m_PersistentCalls:
+        m_Calls: []
   toggled: 0000
 --- !u!1 &2923879384216261103
 GameObject:

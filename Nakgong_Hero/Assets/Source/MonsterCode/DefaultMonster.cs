@@ -43,6 +43,7 @@ namespace Source.MonsterCode
             isAlive = true;
             CurrentAttack = null;
             youCantHurtMe = false;
+            
         }
         public virtual void Start()
         {

@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main_Insert.unity
     guid: 860bb8f876b10d64cbc2f7308e894384
   - enabled: 1
-    path: Assets/Scenes/BetaStage/Stage1.unity
+    path: Assets/Scenes/BetaStage/TestStage.unity
     guid: a6c43b4640141834eae39096d495bcee
   - enabled: 0
     path: Assets/Scenes/Load.unity

@@ -372,10 +372,10 @@ namespace Source.PlayerCode
             
             StartCoroutine(MainCameraShakeDiscourage(5, 0, 0.1f));
             GameUtil.instance.CoolBool(1, v=> _isCanUseEarthCrushing = v);
-            RaycastHit2D[] rayR = { };
-            RaycastHit2D[] rayL = { };
-            Physics2D.RaycastNonAlloc(transform.position, Vector2.right, rayR, earthCrushingSize.x, LayerMask.GetMask("Monster"));
-            Physics2D.RaycastNonAlloc(transform.position, Vector2.left, rayL, earthCrushingSize.x, LayerMask.GetMask("Monster"));
+            RaycastHit2D[] rayR = Physics2D.BoxCastAll(transform.position, earthCrushingSize, 0f, Vector2.right, earthCrushingSize.x / 2,
+                LayerMask.GetMask("Monster"));;
+            RaycastHit2D[] rayL = Physics2D.BoxCastAll(transform.position, earthCrushingSize, 0f, Vector2.left, earthCrushingSize.x / 2,
+                LayerMask.GetMask("Monster"));
             foreach(var o in rayL)
             {
                 if(o.transform.CompareTag("DefaultMonster"))

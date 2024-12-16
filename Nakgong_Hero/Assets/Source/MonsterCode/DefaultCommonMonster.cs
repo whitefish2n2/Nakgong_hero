@@ -11,7 +11,7 @@ namespace Source.MonsterCode
 {
     public abstract class DefaultCommonMonster : DefaultMonster
     {
-        public float stans;
+        public float currentStans;
         public float stansTemp;
         public float knockbackForce;
         public Vector2 aggroRange;
@@ -30,9 +30,18 @@ namespace Source.MonsterCode
             leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
             hpBar = leftBarInstance.GetComponent<RectTransform>();
             hpBar.localScale = (5f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
-            stans *= InvManager.instance.difficulty;
-            stansTemp = stans;
+            currentStans *= InvManager.instance.difficulty;
+            stansTemp = currentStans;
             leftBar = leftBarInstance.GetComponent<Image>();
+            HpUpdate();
+        }
+
+        public override void Init()
+        {
+            base.Init();
+            hpBar.localScale = (5f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
+            currentStans *= InvManager.instance.difficulty;
+            currentStans = stansTemp;
             HpUpdate();
         }
 
@@ -75,6 +84,7 @@ namespace Source.MonsterCode
         {
             GameObject instance = Instantiate(GameStatic.instance.damagePrefab,
                 GameStatic.instance.hpCanvas.transform);
+            GameUtil.instance.SlowMotion(0.35f,0.5f);
             instance.transform.position =
                 GameStatic.instance.mainCam.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
             instance.GetComponent<TextMeshProUGUI>().text = ((int)dmg).ToString();
@@ -83,7 +93,6 @@ namespace Source.MonsterCode
             currentHp -= dmg;
             HpUpdate();
         }
-
         public override void Dead()
         {
             Debug.Log("으앙죽음ㅜㅜ");
