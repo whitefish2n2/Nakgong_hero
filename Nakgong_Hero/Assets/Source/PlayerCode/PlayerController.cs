@@ -117,7 +117,7 @@ namespace Source.PlayerCode
             onGround = PlayerCollider.IsOnGround;
             if (!isStop)
             {
-                if (Input.GetKeyDown(KeyCode.Space) && onGround)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
                     StartCoroutine(Jump());
                 }
@@ -177,7 +177,7 @@ namespace Source.PlayerCode
                         //좌클릭-낙공 우클릭-던지기
                         if (Input.GetMouseButtonDown(0))
                         {
-                            if (_isReadyNakgong && isThrowing && !isGetHooking)
+                            if (!_isNakGonging  && isThrowing && !isGetHooking)
                             {
                                 isGetHooking = true;
                                 _goNakgong = true;
@@ -186,12 +186,6 @@ namespace Source.PlayerCode
                             else if (!_isNakGonging && _isReadyNakgong&& !isGetHooking && !isThrowing && !onGround && !_deager._isThrowing)
                             {
                                 NakGong();
-                            }
-                            else if (!_isNakGonging && !isGetHooking && isThrowing && !onGround)
-                            {
-                                isGetHooking = true;
-                                _goNakgong = true;
-                                GetHooking();
                             }
                             else if (sHold)
                             {
@@ -205,7 +199,7 @@ namespace Source.PlayerCode
                             {
                                 Throwing();
                             }
-                            else if (isThrowing && !isGetHooking && !onGround)
+                            else if (isThrowing && !isGetHooking)
                             {
                                 isGetHooking = true;
                                 GetHooking();
@@ -276,7 +270,8 @@ namespace Source.PlayerCode
         {
             playerPos = gameObject.transform.position;
             playerRotate = gameObject.transform.rotation;
-            _rigid.linearVelocity = new Vector2(_horizontal * InvManager.instance.speed * Time.deltaTime, _rigid.linearVelocity.y);
+            if(!isStun && !isStop)
+                _rigid.linearVelocity = new Vector2(_horizontal * InvManager.instance.speed * Time.deltaTime, _rigid.linearVelocity.y);
 
             //debug section
         }
@@ -317,7 +312,7 @@ namespace Source.PlayerCode
             _horizontal = -1f;
             goingRight = false;
             if(_isReadyNakgong || _isNakGonging) return;
-            gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            gameObject.transform.rotation = Quaternion.Euler(0f, 0f, 0f);//
             _anim.SetBool(RightMoving, false);
             _anim.SetBool(LeftMoving, true);
         }
@@ -407,15 +402,18 @@ namespace Source.PlayerCode
             isStun = true;
             isThrowing = false;
             _horizontal = 0f;
+            _rigid.linearVelocity = Vector2.zero;
             while (isGetHooking && Vector2.Distance(sword.transform.position,transform.position) > 0.9f)
             {
-                transform.position += (sword.transform.position - playerPos).normalized * (Time.deltaTime * getHookSpeed);
+                _rigid.linearVelocity = (sword.transform.position - playerPos) * getHookSpeed;
+                yield return null;
+                /*transform.position += (sword.transform.position - playerPos).normalized * (Time.deltaTime * getHookSpeed);
                 if (_playerCollider.IsColliding)
                 {
                     _goNakgong = false;
                     break;
                 }
-                yield return null;
+                yield return null;*/
             }
             isGetHooking = false;
             isStun = false;
@@ -429,12 +427,12 @@ namespace Source.PlayerCode
                 if (Vector2.Distance(sword.transform.position, transform.position) < 0.9f)
                 {
                     _deager.InstanceTurnBack();
-                    Debug.Log("빠른;");
                 }
                 else _deager.StartCoroutine("TurnBack");
                 while(_deager._isThrowing) yield return null;
                 _isReadyNakgong = true;
-                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower/2);
+                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
+                yield return new WaitForSeconds(0.2f);
                 NakGong();
                 isGetHooking = false;
                 _goNakgong = false;
@@ -454,23 +452,25 @@ namespace Source.PlayerCode
         //점프(2단점프 포함)
         private IEnumerator Jump()
         {
-            _isJumping = true;
-            _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
-            yield return new WaitForSeconds(0.1f);
-          
+            if (isThrowing || isGetHooking) yield break;
+            if (onGround)
+            {
+                _isJumping = true;
+                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
+                yield return new WaitForSeconds(0.1f);
+            }
+            else if (!doNotAttack)
+            {
+                _isReadyNakgong = true;
+                _isJumping = false;
+                _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
+                StartCoroutine(NakgongManage());
+                yield break;
+            }
             while (!onGround)
             {
-                if (Input.GetKeyDown(KeyCode.Space) && !isThrowing && !isGetHooking && !doNotAttack)
-                {
-                    _isReadyNakgong = true;
-                    _isJumping = false;
-                    _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
-                    StartCoroutine(NakgongManage());
-                    yield break;
-                }
                 yield return null;
             }
-
             _isJumping = false;
         }
         //낙공할 때 바닥에 닿을 때까지 속도가 느려지고 낙공 가중치 만드는 청년(낙공 판정 서포터)
@@ -516,6 +516,7 @@ namespace Source.PlayerCode
             }
             CameraDefaultMove.CameraposPlus = 0f;
             _rigid.gravityScale = InvManager.instance.startGravityScale;
+            _rigid.linearVelocity = Vector2.zero;
         }
 
         private void Invincibility(float t)

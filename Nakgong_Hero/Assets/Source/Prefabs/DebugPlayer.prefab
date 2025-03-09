@@ -2161,6 +2161,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7981702973923311171}
     - target: {fileID: 277528094072555680, guid: 48765e228149bde438e6100d1dbbb48c, type: 3}
+      propertyPath: getHookSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 277528094072555680, guid: 48765e228149bde438e6100d1dbbb48c, type: 3}
       propertyPath: cinemachineBrain
       value: 
       objectReference: {fileID: 2128817519436599795}

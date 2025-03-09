@@ -4503,6 +4503,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2722433248754110462, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000143274665
+      objectReference: {fileID: 0}
     - target: {fileID: 3040982737267202753, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4619,6 +4623,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DebugPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 4926191773198565698, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926191773198565698, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.18
+      objectReference: {fileID: 0}
     - target: {fileID: 5412730996824975814, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4657,6 +4669,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5973034535894898183, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5973034535894898183, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6143149089930791275, guid: 6699ec2aa83f6dc4d93011aee0823ce9, type: 3}
@@ -5764,7 +5780,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   genList: 0000000001000000
   genPos:
-  - {x: 1, y: 1}
+  - {x: -2, y: 1}
   - {x: 2, y: 2}
 --- !u!61 &2103473461
 BoxCollider2D:
@@ -5826,7 +5842,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onOpen:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2103473460}
+        m_TargetAssemblyTypeName: Source.MobGenerator.MobGenerator, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   repeatCount: 1
   isOpened: 0
   openSprite: {fileID: 0}

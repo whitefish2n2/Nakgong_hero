@@ -26,9 +26,9 @@ namespace Source.MonsterCode
         [HideInInspector] [CanBeNull] public Wave wave;
         public virtual void Awake()
         {
-            Init();
             thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
             gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            Init();
         }
 
         public virtual void Init()

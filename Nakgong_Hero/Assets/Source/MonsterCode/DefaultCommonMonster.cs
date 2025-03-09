@@ -25,21 +25,21 @@ namespace Source.MonsterCode
 
         public override void Awake()
         {
-            base.Awake();
             leftBarInstance = Instantiate(GameStatic.instance.hpBarPrefabMini, GameStatic.instance.hpCanvas.GetComponent<RectTransform>());
             leftBarInstance.gameObject.GetComponent<Image>().color = new Color32(40, 140, 0,255);
             hpBar = leftBarInstance.GetComponent<RectTransform>();
-            hpBar.localScale = (5f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
-            currentStans *= InvManager.instance.difficulty;
             stansTemp = currentStans;
             leftBar = leftBarInstance.GetComponent<Image>();
+            thisRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+            gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            Init();
             HpUpdate();
         }
 
         public override void Init()
         {
             base.Init();
-            hpBar.localScale = (5f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
+            hpBar.localScale = (8f / GameStatic.instance.mainCam.orthographicSize) * Vector3.one;
             currentStans *= InvManager.instance.difficulty;
             currentStans = stansTemp;
             HpUpdate();
@@ -84,7 +84,7 @@ namespace Source.MonsterCode
         {
             GameObject instance = Instantiate(GameStatic.instance.damagePrefab,
                 GameStatic.instance.hpCanvas.transform);
-            GameUtil.instance.SlowMotion(0.35f,0.5f);
+            GameUtil.instance.SlowMotion(0.03f,0.2f);
             instance.transform.position =
                 GameStatic.instance.mainCam.WorldToScreenPoint((Vector2)gameObject.transform.position + Random.insideUnitCircle * 0.01f);
             instance.GetComponent<TextMeshProUGUI>().text = ((int)dmg).ToString();
@@ -93,7 +93,7 @@ namespace Source.MonsterCode
             currentHp -= dmg;
             HpUpdate();
         }
-        public override void Dead()
+        public override void Dead() 
         {
             Debug.Log("으앙죽음ㅜㅜ");
             MobData.instance.ReturnMob(monsterData.Type,gameObject);
