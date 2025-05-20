@@ -51,7 +51,7 @@ namespace Source.PlayerCode
 
         //점프 중/ 낙공 중 판별 bool
         private bool _isNakGonging;
-        private bool _isJumping;
+        [SerializeField]private bool _isJumping;
         [SerializeField] private bool _isReadyNakgong;
         public bool isThrowing;
         public bool isGetHooking;
@@ -459,7 +459,7 @@ namespace Source.PlayerCode
                 _rigid.linearVelocity = new Vector2(_rigid.linearVelocity.x,InvManager.instance.jumpPower);
                 yield return new WaitForSeconds(0.1f);
             }
-            else if (!doNotAttack)
+            else if (!doNotAttack && _isJumping)
             {
                 _isReadyNakgong = true;
                 _isJumping = false;

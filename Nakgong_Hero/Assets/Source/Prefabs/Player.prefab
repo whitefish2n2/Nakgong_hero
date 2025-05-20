@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 347878282278567687}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.4073503, w: 0.913272}
-  m_LocalPosition: {x: 0.044, y: 0.146, z: 0}
+  m_LocalPosition: {x: 0.242, y: 1.197, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 6717383534955970239}
   - component: {fileID: 2966323214898479843}
   - component: {fileID: 8919922959167722672}
+  - component: {fileID: 2826010588955825325}
   m_Layer: 9
   m_Name: Attack_Hitbox
   m_TagString: AttackBox
@@ -180,6 +181,33 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.3814869, y: 2.3638153}
   m_EdgeRadius: 0
+--- !u!50 &2826010588955825325
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539242866317868977}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 2
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0
 --- !u!1 &2530865713785057606
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,7 +605,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Sprite: {fileID: 21300000, guid: 0ffb25d75aa59da49a2f03cd8afec22a, type: 3}
+  m_Sprite: {fileID: -6198316879909490977, guid: 47e5c4f7f5ac3604082c8120abc41f32, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -647,17 +675,18 @@ MonoBehaviour:
   vCam: {fileID: 0}
   vNakgongCam: {fileID: 0}
   chainLength: 5
-  getHookSpeed: 10
+  getHookSpeed: 3
   throwOnAirCount: 2
   movingFloor: {fileID: 0}
+  _isJumping: 0
   _isReadyNakgong: 0
   isThrowing: 0
   isGetHooking: 0
   attackMode: 
   playerPos: {x: 0, y: 0, z: 0}
   playerRotate: {x: 0, y: 0, z: 0, w: 0}
-  isStop: 1
-  doNotAttack: 1
+  isStop: 0
+  doNotAttack: 0
   isStun: 0
   youCantHurtMe: 0
   goingRight: 1
@@ -698,17 +727,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.16312361, y: -0.43029517}
+  m_Offset: {x: -0.0074424744, y: 0.6644912}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.6, y: 2.11}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 0.85, y: 1.31}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7718344, y: 1.1988224}
+  m_Size: {x: 0.9024048, y: 1.3796129}
   m_EdgeRadius: 0
 --- !u!95 &8880297405116499839
 Animator:

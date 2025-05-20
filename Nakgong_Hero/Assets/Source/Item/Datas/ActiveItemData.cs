@@ -16,7 +16,8 @@ namespace Source.Item.Datas
             DontDestroyOnLoad(gameObject);
             foreach (var o in commonItems)
             {
-                o.prefab.GetComponent<CommonItemOBJ>().itemInfo = o;
+                if(o.prefab)
+                    o.prefab.GetComponent<CommonItemOBJ>().itemInfo = o;
             }
         }
 

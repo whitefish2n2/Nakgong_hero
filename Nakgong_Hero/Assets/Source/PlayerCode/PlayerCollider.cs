@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Source.PlayerCode
@@ -5,34 +6,40 @@ namespace Source.PlayerCode
     public class PlayerCollider : MonoBehaviour
     {
         private bool _colliding;
+        private static Collider2D _collider;
+        private static Vector2 _rayBox;
+
+        private void Start()
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            _collider = GetComponent<Collider2D>();
+            _rayBox = new Vector2(_collider.bounds.min.x-_collider.bounds.min.x, 0.1f);
+        }
+
         public static bool IsOnGround
         {
             get
             {
-                Vector2[] rayOrigins =
+                Vector2 rayOrigin =
+                    new Vector2(PlayerController.instance.playerPos.x, PlayerController.instance.playerPos.y);
+                
+                var ray = Physics2D.OverlapBox(rayOrigin,_rayBox,
+                    0, LayerMask.GetMask("Default","MovingObjects"));
+                if (ray)
                 {
-                    new Vector2(PlayerController.instance.playerPos.x - 0.5f,
-                        PlayerController.instance.playerPos.y - 1f),
-                    new Vector2(PlayerController.instance.playerPos.x + 0.5f,
-                        PlayerController.instance.playerPos.y - 1f)
-                };
-
-                foreach (var origin in rayOrigins)
-                {
-                    RaycastHit2D ray = Physics2D.Raycast(origin, Vector2.down, 0.2f, LayerMask.GetMask("Default","MovingObjects"));
-
-                    if (ray.collider)
+                    if (ray.CompareTag("Ground"))
                     {
-                        if (ray.collider.CompareTag("Ground"))
-                        {
-                            PlayerController.instance.movingFloor = null;
-                            return true;
-                        }
-                        else if (ray.collider.CompareTag("MovingFloor"))
-                        {
-                            PlayerController.instance.movingFloor = ray.transform.gameObject;
-                            return true;
-                        }
+                        PlayerController.instance.movingFloor = null;
+                        return true;
+                    }
+                    else if (ray.CompareTag("MovingFloor"))
+                    {
+                        PlayerController.instance.movingFloor = ray.transform.gameObject;
+                        return true;
                     }
                 }
 
