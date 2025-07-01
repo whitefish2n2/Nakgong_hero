@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      DevilsContractInv_0: -4016504615646290441
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

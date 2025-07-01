@@ -209,7 +209,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      BrokenWoodBox_0: 238131441905553424
+      BrokenWoodBox_1: -8224879325221106792
+      BrokenWoodBox_2: -6144788519307345545
+      BrokenWoodBox_3: 3510323068336177117
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
